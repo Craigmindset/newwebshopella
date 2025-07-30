@@ -6,6 +6,7 @@ const merchants = [
     name: "Merchant One",
     products: 120,
     transactions: 340,
+    totalSales: "₦500,000",
     commission: "₦50,000",
     status: "Approved",
   },
@@ -13,6 +14,7 @@ const merchants = [
     name: "Merchant Two",
     products: 80,
     transactions: 210,
+    totalSales: "₦300,000",
     commission: "₦30,000",
     status: "Pending",
   },
@@ -28,6 +30,7 @@ export default function MerchantTable({ dark }: { dark?: boolean }) {
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Products</th>
             <th className="px-4 py-2">Transactions</th>
+            <th className="px-4 py-2">Total Sales</th>
             <th className="px-4 py-2">Commission</th>
             <th className="px-4 py-2">Status</th>
             <th className="px-4 py-2">Actions</th>
@@ -39,6 +42,7 @@ export default function MerchantTable({ dark }: { dark?: boolean }) {
               <td className="px-4 py-2 whitespace-nowrap">{m.name}</td>
               <td className="px-4 py-2 whitespace-nowrap">{m.products}</td>
               <td className="px-4 py-2 whitespace-nowrap">{m.transactions}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{m.totalSales}</td>
               <td className="px-4 py-2 whitespace-nowrap">{m.commission}</td>
               <td className="px-4 py-2 whitespace-nowrap">{m.status}</td>
               <td className="px-4 py-2 whitespace-nowrap flex gap-2">

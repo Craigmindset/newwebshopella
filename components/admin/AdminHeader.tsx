@@ -1,8 +1,15 @@
 "use client";
-import { Bell, Wallet, Sun, Moon } from "lucide-react";
+import { Bell, Wallet, Sun, Moon, LogOut } from "lucide-react";
 import { useState } from "react";
 
 export default function AdminHeader({ dark, toggleTheme }: { dark: boolean; toggleTheme: () => void }) {
+  // Logout logic: clear any admin session and redirect to home
+  const handleLogout = () => {
+    // Clear cached email (optional, if you want to log out fully)
+    localStorage.removeItem("admin-login-email");
+    // Add any other session clearing logic here
+    window.location.href = "/admindesk";
+  };
   return (
     <header
       className={`sticky top-0 z-40 flex items-center justify-between px-6 h-16 border-b ${dark ? "bg-[#18181b] border-[#23232a] shadow-lg" : "bg-white border-gray-200 shadow-lg"}`}
@@ -34,6 +41,14 @@ export default function AdminHeader({ dark, toggleTheme }: { dark: boolean; togg
             className="h-10 w-10 rounded-full object-cover border border-[#23232a]"
           />
           <span className={`font-semibold truncate max-w-[120px] ${dark ? "text-white" : "text-gray-800"}`}>Admin</span>
+          <button
+            onClick={handleLogout}
+            className="p-2 rounded-full hover:bg-red-100 transition flex items-center gap-1"
+            title="Logout"
+          >
+            <LogOut className={`h-5 w-5 ${dark ? "text-white" : "text-gray-800"}`} />
+            <span className="hidden sm:inline font-medium">Logout</span>
+          </button>
         </div>
       </div>
     </header>
