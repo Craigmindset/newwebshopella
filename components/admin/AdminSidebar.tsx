@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import {
   Users,
   Store,
@@ -37,19 +38,30 @@ const links = [
 ];
 
 export default function AdminSidebar({ dark }: { dark: boolean }) {
+  const [active, setActive] = useState(links[0].name);
   return (
     <aside className={`w-64 min-h-screen flex flex-col py-8 px-4 border-r ${dark ? "bg-[#23232a] text-white border-[#23232a]" : "bg-gray-100 text-gray-800 border-gray-200"}`}>
       <nav className="flex flex-col gap-3 flex-1">
-        {links.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            className={`flex items-center gap-3 px-4 py-2 rounded transition text-sm font-medium whitespace-normal ${dark ? "hover:bg-[#466cf4] hover:text-white" : "hover:bg-[#466cf4] hover:text-white"}`}
-          >
-            <link.icon className={`h-5 w-5 shrink-0 ${dark ? "text-white" : "text-gray-800"}`} />
-            <span className="truncate max-w-[140px]">{link.name}</span>
-          </Link>
-        ))}
+        {links.map((link) => {
+          const isActive = active === link.name;
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={() => setActive(link.name)}
+              className={`flex items-center gap-3 px-4 py-2 rounded transition text-sm font-medium whitespace-normal
+                ${isActive
+                  ? "bg-[#466cf4] text-white"
+                  : dark
+                  ? "hover:bg-[#466cf4] hover:text-white"
+                  : "hover:bg-[#466cf4] hover:text-white"}
+              `}
+            >
+              <link.icon className={`h-5 w-5 shrink-0 ${isActive ? "text-white" : dark ? "text-white" : "text-gray-800"}`} />
+              <span className="truncate max-w-[140px]">{link.name}</span>
+            </Link>
+          );
+        })}
       </nav>
       <button
         onClick={() => {
