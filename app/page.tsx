@@ -2,6 +2,7 @@ import Header from "@/components/Header"
 import HeroSection from "@/components/HeroSection"
 import BrandCategory from "@/components/BrandCategory"
 import ProductGrid from "@/components/ProductGrid"
+import CategorySection from "@/components/CategorySection"
 import AdBanner from "@/components/AdBanner"
 import Footer from "@/components/Footer"
 
@@ -14,9 +15,11 @@ export default function Home() {
       {/* Hero Section - Two-column layout with CTA and hero image */}
       <HeroSection />
 
-      {/* Brand Category - Auto-sliding carousel of brand logos */}
-      <BrandCategory />
 
+      {/* Category Section - Grid of product categories with icons */}
+      <CategorySection />
+
+    
       {/* Product Grid - Sliding product showcase with modal view */}
       <ProductGrid />
 

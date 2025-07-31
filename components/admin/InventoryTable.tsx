@@ -48,6 +48,8 @@ const filterFields = [
   { key: "merchant", label: "Merchant" },
 ];
 
+import { Plus, Info } from "lucide-react";
+
 export default function InventoryTable() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filter, setFilter] = useState<{ key: keyof Product; value: string }>({ key: "name", value: "" });
@@ -75,26 +77,86 @@ export default function InventoryTable() {
 
   const totalPages = Math.ceil(filteredProducts.length / pageSize);
 
+  // State for percent input
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [markupPercent, setMarkupPercent] = useState(0);
+
+  // Handler for applying percent changes
+  const handleApplyPercent = () => {
+    // Only apply to currently visible products
+    const updated = products.map((p, idx) => {
+      if (idx >= (page - 1) * pageSize && idx < page * pageSize) {
+        const discount = Math.round((discountPercent / 100) * p.merchantPrice);
+        const afterDiscount = p.merchantPrice - discount;
+        const markup = Math.round((markupPercent / 100) * afterDiscount);
+        const salesPrice = afterDiscount + markup;
+        return {
+          ...p,
+          discount,
+          markup,
+          salesPrice,
+        };
+      }
+      return p;
+    });
+    setProducts(updated);
+  };
+
   return (
     <div className="rounded-xl shadow-lg p-6 w-full overflow-x-auto bg-white dark:bg-[#18181b] border border-gray-200 dark:border-[#23232a]">
       <h2 className="text-2xl font-bold mb-6 text-[#466cf4] dark:text-white tracking-tight">Inventory Management</h2>
-      <div className="flex gap-4 mb-6 flex-wrap">
-        <select
-          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#466cf4] text-xs placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
-          value={filter.key}
-          onChange={(e) => setFilter({ ...filter, key: e.target.value as keyof Product })}
-        >
-          {filterFields.map((f) => (
-            <option key={f.key} value={f.key}>{f.label}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#466cf4] text-xs placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
-          placeholder={`${filterFields.find(f => f.key === filter.key)?.label}`}
-          value={filter.value}
-          onChange={(e) => setFilter({ ...filter, value: e.target.value })}
-        />
+      <div className="flex gap-4 mb-6 flex-wrap items-center justify-between">
+        <div className="flex gap-2 items-center">
+          <select
+            className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#466cf4] text-xs placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
+            value={filter.key}
+            onChange={(e) => setFilter({ ...filter, key: e.target.value as keyof Product })}
+          >
+            {filterFields.map((f) => (
+              <option key={f.key} value={f.key}>{f.label}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#466cf4] text-xs placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
+            placeholder={`${filterFields.find(f => f.key === filter.key)?.label}`}
+            value={filter.value}
+            onChange={(e) => setFilter({ ...filter, value: e.target.value })}
+          />
+        </div>
+        <div className="flex gap-2 items-center relative">
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
+            Discount
+            <span className="relative group">
+              <Info className="w-4 h-4 text-[#466cf4] cursor-pointer" />
+              <span className="absolute left-6 top-1 z-10 hidden group-hover:block group-focus:block bg-white dark:bg-[#23232a] text-xs text-gray-700 dark:text-gray-200 rounded shadow-lg px-3 py-2 w-56">
+                Kindly update the price discount and mark up here
+              </span>
+            </span>
+          </span>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            value={discountPercent}
+            onChange={e => setDiscountPercent(Number(e.target.value))}
+            className="border px-2 py-1 rounded text-xs w-16 focus:outline-none focus:ring-2 focus:ring-[#466cf4] placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
+            placeholder="%"
+          />
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Markup</span>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            value={markupPercent}
+            onChange={e => setMarkupPercent(Number(e.target.value))}
+            className="border px-2 py-1 rounded text-xs w-16 focus:outline-none focus:ring-2 focus:ring-[#466cf4] placeholder-gray-400 dark:placeholder-gray-300 bg-white dark:bg-[#23232a] text-gray-900 dark:text-white"
+            placeholder="%"
+          />
+          <Button size="sm" className="bg-red-700 dark:bg-red-600 text-white px-2" onClick={handleApplyPercent}>
+            <Plus className="w-4 h-4 text-white" />
+          </Button>
+        </div>
       </div>
       <table className="min-w-full text-sm text-left rounded-xl overflow-hidden">
         <thead>

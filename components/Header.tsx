@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingCart, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,16 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useCart } from "./ProductGrid"; // Import cart context
 
 export default function Header() {
-  const [activeMenu, setActiveMenu] = useState("Home");
+  const [activeMenu, setActiveMenu] = useState<string>("Home");
+
+  // Highlight menu based on current route
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const found = menuItems.find(item => item.href === path);
+      if (found) setActiveMenu(found.name);
+    }
+  }, []);
 
   // Get cart count from context
   const { cartCount } = useCart();
@@ -17,7 +26,7 @@ export default function Header() {
   const menuItems = [
     { name: "Home", href: "/" },
     { name: "Access Loans", href: "/loans" },
-    { name: "Stores", href: "/stores" },
+    { name: "Stores", href: "/store" },
     { name: "Shopella Deals", href: "/deals" },
     { name: "About", href: "/about" },
   ];
@@ -28,13 +37,17 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo Section - Left Aligned */}
           <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold">
-              Shopella
+            <Link href="/">
+              <img
+                src="/Shopella Logo Design.png"
+                alt="Shopella Logo"
+                className="h-20 w-auto object-contain"
+              />
             </Link>
           </div>
 
           {/* Desktop Menu - Center/Left Aligned */}
-          <nav className="hidden md:flex space-x-8 ml-8">
+          <nav className="hidden md:flex space-x-4 ml-4">
             {menuItems.map((item) => (
               <Link
                 key={item.name}

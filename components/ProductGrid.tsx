@@ -1,12 +1,32 @@
 "use client"
 
-import { useState, useEffect, createContext, useContext } from "react"
+import { useState, useEffect, createContext, useContext, ReactNode } from "react"
 import Image from "next/image"
 import { ShoppingCart, Eye, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // Cart Context for global cart state management
-const CartContext = createContext(null)
+type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  gallery?: string[];
+  description?: string;
+  specifications?: string[];
+};
+
+type CartContextType = {
+  cartItems: CartItem[];
+  cartCount: number;
+  addToCart: (product: CartItem, quantity?: number) => void;
+  removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, newQuantity: number) => void;
+  clearCart: () => void;
+  getCartTotal: () => number;
+};
+
+const CartContext = createContext<CartContextType | null>(null)
 
 export const useCart = () => {
   const context = useContext(CartContext)
@@ -16,9 +36,9 @@ export const useCart = () => {
   return context
 }
 
-export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([])
-  const [cartCount, setCartCount] = useState(0)
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [cartCount, setCartCount] = useState<number>(0)
 
   // Load cart from localStorage on component mount
   useEffect(() => {
@@ -26,43 +46,39 @@ export const CartProvider = ({ children }) => {
     if (savedCart) {
       const parsedCart = JSON.parse(savedCart)
       setCartItems(parsedCart)
-      setCartCount(parsedCart.reduce((total, item) => total + item.quantity, 0))
+      setCartCount(parsedCart.reduce((total: number, item: CartItem) => total + item.quantity, 0))
     }
   }, [])
 
   // Save cart to localStorage whenever cart changes
   useEffect(() => {
     localStorage.setItem("shopella-cart", JSON.stringify(cartItems))
-    setCartCount(cartItems.reduce((total, item) => total + item.quantity, 0))
+    setCartCount(cartItems.reduce((total: number, item: CartItem) => total + item.quantity, 0))
   }, [cartItems])
 
-  const addToCart = (product, quantity = 1) => {
-    setCartItems((prevItems) => {
+  const addToCart = (product: CartItem, quantity: number = 1) => {
+    setCartItems((prevItems: CartItem[]) => {
       const existingItem = prevItems.find((item) => item.id === product.id)
-
       if (existingItem) {
-        // Update quantity if item already exists
         return prevItems.map((item) =>
           item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item,
         )
       } else {
-        // Add new item to cart
         return [...prevItems, { ...product, quantity }]
       }
     })
   }
 
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId))
+  const removeFromCart = (productId: number) => {
+    setCartItems((prevItems: CartItem[]) => prevItems.filter((item) => item.id !== productId))
   }
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = (productId: number, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeFromCart(productId)
       return
     }
-
-    setCartItems((prevItems) =>
+    setCartItems((prevItems: CartItem[]) =>
       prevItems.map((item) => (item.id === productId ? { ...item, quantity: newQuantity } : item)),
     )
   }
@@ -71,8 +87,8 @@ export const CartProvider = ({ children }) => {
     setCartItems([])
   }
 
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  const getCartTotal = (): number => {
+    return cartItems.reduce((total: number, item: CartItem) => total + item.price * item.quantity, 0)
   }
 
   return (
@@ -92,67 +108,7 @@ export const CartProvider = ({ children }) => {
   )
 }
 
-// Mock product data - In real app, this would come from API
-const products = [
-  {
-    id: 1,
-    name: "iPhone 15 Pro",
-    price: 999,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Latest iPhone with advanced camera system and A17 Pro chip.",
-    specifications: ["6.1-inch display", "A17 Pro chip", "128GB storage", "Triple camera system"],
-    gallery: [
-      "/placeholder.svg?height=400&width=400",
-      "/placeholder.svg?height=400&width=400",
-      "/placeholder.svg?height=400&width=400",
-    ],
-  },
-  {
-    id: 2,
-    name: "Samsung Galaxy S24",
-    price: 899,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Flagship Android phone with AI-powered features.",
-    specifications: ["6.2-inch display", "Snapdragon 8 Gen 3", "256GB storage", "Triple camera"],
-    gallery: ["/placeholder.svg?height=400&width=400", "/placeholder.svg?height=400&width=400"],
-  },
-  {
-    id: 3,
-    name: "MacBook Air M3",
-    price: 1299,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Ultra-thin laptop with M3 chip for incredible performance.",
-    specifications: ["13.6-inch display", "M3 chip", "512GB SSD", "18-hour battery"],
-    gallery: ["/placeholder.svg?height=400&width=400", "/placeholder.svg?height=400&width=400"],
-  },
-  {
-    id: 4,
-    name: "Sony WH-1000XM5",
-    price: 399,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Premium noise-canceling headphones with exceptional sound.",
-    specifications: ["30-hour battery", "Active noise canceling", "Quick charge", "Touch controls"],
-    gallery: ["/placeholder.svg?height=400&width=400", "/placeholder.svg?height=400&width=400"],
-  },
-  {
-    id: 5,
-    name: 'iPad Pro 12.9"',
-    price: 1099,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Professional tablet with M2 chip and Liquid Retina display.",
-    specifications: ["12.9-inch display", "M2 chip", "128GB storage", "Apple Pencil support"],
-    gallery: ["/placeholder.svg?height=400&width=400", "/placeholder.svg?height=400&width=400"],
-  },
-  {
-    id: 6,
-    name: "Nintendo Switch OLED",
-    price: 349,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Gaming console with vibrant OLED screen.",
-    specifications: ["7-inch OLED screen", "Enhanced audio", "64GB storage", "Joy-Con controllers"],
-    gallery: ["/placeholder.svg?height=400&width=400", "/placeholder.svg?height=400&width=400"],
-  },
-]
+import { products } from "@/lib/products"
 
 export default function ProductGrid() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -180,7 +136,7 @@ export default function ProductGrid() {
   }
 
   // Add to cart functionality - now properly updates cart state
-  const addToCart = (product) => {
+  const addToCart = (product: CartItem) => {
     // API integration point: POST /api/cart/add
     console.log("Adding to cart:", { productId: product.id, quantity })
 
@@ -198,7 +154,7 @@ export default function ProductGrid() {
   }
 
   // Open product modal
-  const openProductModal = (product) => {
+  const openProductModal = (product: CartItem) => {
     setSelectedProduct(product)
     setSelectedImage(0)
     setQuantity(1)
@@ -210,7 +166,7 @@ export default function ProductGrid() {
         <div className="container mx-auto px-4">
           {/* Section Title */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Top Products</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Top Brands</h2>
             <div className="w-24 h-1 bg-[#466cf4] mx-auto"></div>
           </div>
 
@@ -256,7 +212,7 @@ export default function ProductGrid() {
 
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900 mb-2 truncate">{product.name}</h3>
-                    <p className="text-[#466cf4] font-bold text-lg">${product.price}</p>
+                    <p className="text-[#466cf4] font-bold text-lg">₦{product.price}</p>
                   </div>
                 </div>
               ))}
@@ -282,7 +238,7 @@ export default function ProductGrid() {
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center p-6 border-b">
-                <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
+                <h2 className="text-2xl font-bold">{(selectedProduct as CartItem).name}</h2>
                 <button onClick={() => setSelectedProduct(null)} className="text-gray-500 hover:text-gray-700">
                   <X className="h-6 w-6" />
                 </button>
@@ -293,15 +249,15 @@ export default function ProductGrid() {
                 <div>
                   <div className="mb-4">
                     <Image
-                      src={selectedProduct.gallery[selectedImage] || "/placeholder.svg"}
-                      alt={selectedProduct.name}
+                      src={(selectedProduct as CartItem).gallery?.[selectedImage] || "/placeholder.svg"}
+                      alt={(selectedProduct as CartItem).name}
                       width={400}
                       height={400}
                       className="w-full h-80 object-cover rounded-lg"
                     />
                   </div>
                   <div className="flex space-x-2 overflow-x-auto">
-                    {selectedProduct.gallery.map((image, index) => (
+                    {(selectedProduct as CartItem).gallery?.map((image: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
@@ -311,7 +267,7 @@ export default function ProductGrid() {
                       >
                         <Image
                           src={image || "/placeholder.svg"}
-                          alt={`${selectedProduct.name} ${index + 1}`}
+                          alt={`${(selectedProduct as CartItem).name} ${index + 1}`}
                           width={64}
                           height={64}
                           className="w-full h-full object-cover"
@@ -325,13 +281,13 @@ export default function ProductGrid() {
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-xl font-semibold mb-2">Description</h3>
-                    <p className="text-gray-600">{selectedProduct.description}</p>
+                    <p className="text-gray-600">{(selectedProduct as CartItem).description}</p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-semibold mb-2">Specifications</h3>
                     <ul className="list-disc list-inside space-y-1 text-gray-600">
-                      {selectedProduct.specifications.map((spec, index) => (
+                      {(selectedProduct as CartItem).specifications?.map((spec: string, index: number) => (
                         <li key={index}>{spec}</li>
                       ))}
                     </ul>
@@ -354,10 +310,10 @@ export default function ProductGrid() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl font-bold text-[#466cf4]">${selectedProduct.price}</span>
+                    <span className="text-3xl font-bold text-[#466cf4]">₦{(selectedProduct as CartItem).price}</span>
                     <div className="relative">
                       <Button
-                        onClick={() => addToCart(selectedProduct)}
+                        onClick={() => addToCart(selectedProduct as CartItem)}
                         className="bg-[#466cf4] hover:bg-[#3a5ce0] text-white px-8 py-3"
                       >
                         Add to Cart

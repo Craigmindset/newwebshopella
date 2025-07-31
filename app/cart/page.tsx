@@ -9,14 +9,14 @@ import { useCart } from "@/components/ProductGrid"
 import Header from "@/components/Header"
 
 export default function CartPage() {
-  const { cartItems, cartCount, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart()
-  const [isLoading, setIsLoading] = useState(false)
+  const { cartItems, cartCount, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart() as import("@/components/ProductGrid").CartContextType
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const handleQuantityChange = (productId, newQuantity) => {
+  const handleQuantityChange = (productId: number, newQuantity: number) => {
     updateQuantity(productId, newQuantity)
   }
 
-  const handleRemoveItem = (productId) => {
+  const handleRemoveItem = (productId: number) => {
     removeFromCart(productId)
   }
 
@@ -62,7 +62,7 @@ export default function CartPage() {
             <Link href="/" className="text-[#466cf4] hover:text-[#3a5ce0]">
               <ArrowLeft className="h-6 w-6" />
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Shopping Cart</h1>
             <span className="bg-[#466cf4] text-white px-3 py-1 rounded-full text-sm">
               {cartCount} {cartCount === 1 ? "item" : "items"}
             </span>
@@ -83,61 +83,51 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
+              <div key={item.id} className="bg-white rounded-lg shadow p-3">
+                <div className="flex items-center space-x-3">
                   {/* Product Image */}
-                  <div className="flex-shrink-0">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.name}
-                      width={120}
-                      height={120}
-                      className="w-24 h-24 md:w-30 md:h-30 object-cover rounded-lg"
-                    />
-                  </div>
-
+                  <Image
+                    src={item.image || "/placeholder.svg"}
+                    alt={item.name}
+                    width={56}
+                    height={56}
+                    className="w-14 h-14 object-cover rounded"
+                  />
                   {/* Product Details */}
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.name}</h3>
-                    <p className="text-gray-600 text-sm mb-3">{item.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-[#466cf4]">${item.price.toFixed(2)}</span>
-
-                      {/* Quantity Controls */}
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center border rounded-lg">
-                          <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                            className="p-2 hover:bg-gray-100 transition-colors"
-                            disabled={item.quantity <= 1}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </button>
-                          <span className="px-4 py-2 font-semibold min-w-[3rem] text-center">{item.quantity}</span>
-                          <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                            className="p-2 hover:bg-gray-100 transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </button>
-                        </div>
-
-                        {/* Remove Button */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-gray-900 truncate">{item.name}</h3>
+                    <p className="text-xs text-gray-600 truncate">{item.description}</p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className="text-base font-bold text-[#466cf4]">₦{item.price.toFixed(2)}</span>
+                      <div className="flex items-center border rounded">
                         <button
-                          onClick={() => handleRemoveItem(item.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Remove item"
+                          onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                          className="px-1 py-0.5 hover:bg-gray-100 transition-colors"
+                          disabled={item.quantity <= 1}
                         >
-                          <Trash2 className="h-5 w-5" />
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="px-2 py-0.5 font-semibold text-center text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          className="px-1 py-0.5 hover:bg-gray-100 transition-colors"
+                        >
+                          <Plus className="h-3 w-3" />
                         </button>
                       </div>
+                      <button
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="ml-2 p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Remove item"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-
                   {/* Item Total */}
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">Total</p>
-                    <p className="text-xl font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                  <div className="text-right min-w-[70px]">
+                    <p className="text-xs text-gray-600">Total</p>
+                    <p className="text-base font-bold text-gray-900">₦{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -152,20 +142,20 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal ({cartCount} items)</span>
-                  <span className="font-semibold">${getCartTotal().toFixed(2)}</span>
+                  <span className="font-semibold">₦{getCartTotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600">Delivery</span>
                   <span className="font-semibold">Free</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold">${(getCartTotal() * 0.08).toFixed(2)}</span>
+                  <span className="text-gray-600">Vat</span>
+                  <span className="font-semibold">₦{(getCartTotal() * 0.08).toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-lg font-semibold">Total</span>
-                    <span className="text-xl font-bold text-[#466cf4]">${(getCartTotal() * 1.08).toFixed(2)}</span>
+                    <span className="text-xl font-bold text-[#466cf4]">₦{(getCartTotal() * 1.08).toFixed(2)}</span>
                   </div>
                 </div>
               </div>

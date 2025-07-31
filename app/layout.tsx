@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Shopella - Credit-Powered E-commerce Platform",
   description: "Access instant wallet loans and shop top products with the best deals",
-    generator: 'v0.dev'
+    generator: ''
 }
 
 export default function RootLayout({

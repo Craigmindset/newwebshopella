@@ -1,58 +1,100 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Poppins } from "next/font/google";
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  display: "swap",
+});
+
+const heroImage = {
+  src: "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/shopella-hero-img.png",
+  alt: "Shopella Hero Section",
+};
 
 export default function HeroSection() {
+  const [word, setWord] = useState("Smarter");
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWord((prev) => (prev === "Smarter" ? "Better" : "Smarter"));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="bg-[#d0e6f5] py-12 md:py-20">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Left Column - Content */}
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Shop Better <br />
-              <span className="text-[#466cf4]">Access Loans</span>
-            </h1>
+    <>
+      <section className="relative bg-[#d0e6f5] min-h-[700px] overflow-hidden">
+        {/* Background image with opacity */}
+        <div
+          className="absolute inset-0 w-full h-full z-0"
+          style={{
+            backgroundImage: 'url("/background-img .jpg")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.1,
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch h-full min-h-[600px]">
+            {/* Left Column - Content */}
+            <div className="space-y-6 ml-14 lg:ml-16 flex flex-col justify-center pt-4">
+             
 
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-lg">
-              Welcome to Shopella! Your credit-powered e-commerce platform. Access instant wallet loans and shop top
-              products with the best deals.
-            </p>
+              <div className="space-y-2">
+                <h1
+                  className={`${poppins.className} text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tighter`}
+                >
+                  Shop{' '}
+                  <span
+                    className={`transition-all duration-500 inline-block ${word === 'Better' ? 'text-[#466cf4]' : 'text-red-600'}`}
+                  >
+                    {word}
+                  </span>
+                </h1>
+                <h1
+                  className={`${poppins.className} text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tighter`}
+                >
+                  Access Loans
+                </h1>
+              </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-[#466cf4] hover:bg-[#3a5ce0] text-white px-8 py-3 text-lg font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-              >
-                Get Loan
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-[#466cf4] text-[#466cf4] hover:bg-[#466cf4] hover:text-white px-8 py-3 text-lg font-semibold transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent"
-              >
-                Visit Store
-              </Button>
+              <p className="text-xm text-gray-700 leading-normal max-w-lg">
+               welcome to shopella! Your credit-powered e-commerce platform. Access instant wallet loans and shop top products with the best deal.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button
+                  size="lg"
+                  className="bg-green-900 hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
+                >
+                  Get Loans
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 bg-transparent"
+                >
+                  Visit Store
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Right Column - Hero Image */}
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md lg:max-w-lg">
+            {/* Right Column - Image aligned bottom */}
+            <div className="relative w-full h-full min-h-[500px] flex items-end justify-center">
               <Image
-                src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/shopella-hero-img.png"
-                alt="Shopella Hero Image"
-                width={500}
-                height={400}
-                className="w-full h-auto object-contain"
+                src={heroImage.src}
+                alt={heroImage.alt}
+                fill
+                className="object-contain object-bottom"
                 priority
               />
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  )
+      </section>
+    </>
+  );
 }

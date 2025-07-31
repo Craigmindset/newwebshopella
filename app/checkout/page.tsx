@@ -78,9 +78,9 @@ export default function CheckoutPage() {
 
   // Calculate totals
   const subtotal = getCartTotal()
-  const tax = subtotal * 0.08
-  const shipping = 0 // Free shipping
-  const total = subtotal + tax + shipping
+  const vat = subtotal * 0.075
+  const delivery = 0 // Free delivery
+  const total = subtotal + vat + delivery
 
   // Calculate BNPL monthly payment
   const calculateBnplPayment = () => {
@@ -103,14 +103,14 @@ export default function CheckoutPage() {
   }, [selectedPaymentMethod])
 
   // Handle form submissions
-  const handleGuestInfoChange = (e) => {
+  const handleGuestInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGuestInfo({
       ...guestInfo,
       [e.target.name]: e.target.value,
     })
   }
 
-  const handleCardInfoChange = (e) => {
+  const handleCardInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCardInfo({
       ...cardInfo,
       [e.target.name]: e.target.value,
@@ -274,9 +274,91 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Payment Options */}
+          {/* Billing/Delivery Information FIRST */}
           <div className="space-y-6">
-            {/* Payment Method Selection */}
+            {/* Billing/Delivery Information */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                {selectedPaymentMethod === "paystack" ? "Billing Information" : "Delivery Information"}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                  <Input
+                    name="firstName"
+                    value={guestInfo.firstName}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter first name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                  <Input
+                    name="lastName"
+                    value={guestInfo.lastName}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter last name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                  <Input
+                    name="email"
+                    type="email"
+                    value={guestInfo.email}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter email address"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
+                  <Input
+                    name="phone"
+                    type="tel"
+                    value={guestInfo.phone}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter phone number"
+                    required
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Address *</label>
+                  <Input
+                    name="address"
+                    value={guestInfo.address}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter delivery address"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
+                  <Input
+                    name="city"
+                    value={guestInfo.city}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter city"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
+                  <Input
+                    name="state"
+                    value={guestInfo.state}
+                    onChange={handleGuestInfoChange}
+                    placeholder="Enter state"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Method Selection (now after billing info) */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Choose Payment Method</h2>
 
@@ -347,7 +429,7 @@ export default function CheckoutPage() {
                             <div className="font-semibold">{duration.label}</div>
                             <div className="text-sm text-gray-600">{duration.interestRate}% interest</div>
                             <div className="text-sm font-medium text-[#466cf4]">
-                              ${calculateBnplPayment().toFixed(2)}/month
+                              ₦{calculateBnplPayment().toFixed(2)}/month
                             </div>
                           </div>
                         ))}
@@ -406,7 +488,7 @@ export default function CheckoutPage() {
                                 <div>
                                   <h5 className="font-semibold">{provider.name}</h5>
                                   <p className="text-sm text-gray-600">
-                                    Up to ${provider.maxAmount.toLocaleString()} • {provider.interestRate}% interest
+                                    Up to ₦{provider.maxAmount.toLocaleString()} • {provider.interestRate}% interest
                                   </p>
                                 </div>
                               </div>
@@ -430,146 +512,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Guest Information Form */}
-            {(showGuestForm || selectedPaymentMethod === "paystack") && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                  {selectedPaymentMethod === "paystack" && !showGuestForm
-                    ? "Billing Information"
-                    : "Delivery Information"}
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-                    <Input
-                      name="firstName"
-                      value={guestInfo.firstName}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter first name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-                    <Input
-                      name="lastName"
-                      value={guestInfo.lastName}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter last name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <Input
-                      name="email"
-                      type="email"
-                      value={guestInfo.email}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter email address"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
-                    <Input
-                      name="phone"
-                      type="tel"
-                      value={guestInfo.phone}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter phone number"
-                      required
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Address *</label>
-                    <Input
-                      name="address"
-                      value={guestInfo.address}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter delivery address"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
-                    <Input
-                      name="city"
-                      value={guestInfo.city}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter city"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
-                    <Input
-                      name="state"
-                      value={guestInfo.state}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Enter state"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Card Information (for Paystack) */}
-            {selectedPaymentMethod === "paystack" && !showGuestForm && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Card Information</h2>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Card Number *</label>
-                    <Input
-                      name="cardNumber"
-                      value={cardInfo.cardNumber}
-                      onChange={handleCardInfoChange}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date *</label>
-                      <Input
-                        name="expiryDate"
-                        value={cardInfo.expiryDate}
-                        onChange={handleCardInfoChange}
-                        placeholder="MM/YY"
-                        maxLength={5}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
-                      <Input
-                        name="cvv"
-                        value={cardInfo.cvv}
-                        onChange={handleCardInfoChange}
-                        placeholder="123"
-                        maxLength={4}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Cardholder Name *</label>
-                    <Input
-                      name="cardName"
-                      value={cardInfo.cardName}
-                      onChange={handleCardInfoChange}
-                      placeholder="Name on card"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Card Information section removed as requested */}
           </div>
 
           {/* Order Summary */}
@@ -582,7 +525,7 @@ export default function CheckoutPage() {
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
                     <Image
-                      src={item.image || "/placeholder.svg"}
+                      src={item.img || "/placeholder.svg"}
                       alt={item.name}
                       width={60}
                       height={60}
@@ -592,7 +535,7 @@ export default function CheckoutPage() {
                       <h4 className="text-sm font-medium text-gray-900 truncate">{item.name}</h4>
                       <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-sm font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-sm font-semibold">₦{(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
@@ -601,15 +544,15 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-6 border-t pt-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">₦{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600">Delivery</span>
                   <span className="font-semibold text-green-600">Free</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold">${tax.toFixed(2)}</span>
+                  <span className="text-gray-600">Vat</span>
+                  <span className="font-semibold">₦{vat.toFixed(2)}</span>
                 </div>
 
                 {/* BNPL Additional Info */}
@@ -617,7 +560,7 @@ export default function CheckoutPage() {
                   <div className="bg-blue-50 p-3 rounded-lg">
                     <div className="flex justify-between text-sm">
                       <span>Monthly Payment:</span>
-                      <span className="font-semibold">${calculateBnplPayment().toFixed(2)}</span>
+                      <span className="font-semibold">₦{calculateBnplPayment().toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Duration:</span>
@@ -632,7 +575,7 @@ export default function CheckoutPage() {
                     <div className="text-sm">
                       <div className="flex justify-between">
                         <span>Loan Amount:</span>
-                        <span className="font-semibold">${total.toFixed(2)}</span>
+                        <span className="font-semibold">₦{total.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Provider:</span>
@@ -651,7 +594,7 @@ export default function CheckoutPage() {
                 <div className="border-t pt-3">
                   <div className="flex justify-between">
                     <span className="text-lg font-semibold">Total</span>
-                    <span className="text-xl font-bold text-[#466cf4]">${total.toFixed(2)}</span>
+                    <span className="text-xl font-bold text-[#466cf4]">₦{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
