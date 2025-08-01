@@ -3,10 +3,12 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -15,6 +17,8 @@ export default function LoginPage() {
     password: "",
   })
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,7 +29,10 @@ export default function LoginPage() {
       console.log("Login attempt:", formData)
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      // Redirect to dashboard or home page after successful login
+      // Set user session
+      login({ name: formData.email.split("@")[0], email: formData.email })
+      // Redirect to dashboard/user after successful login
+      router.push("/dashboard/user")
     } catch (error) {
       console.error("Login error:", error)
     } finally {
@@ -124,6 +131,7 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             className="w-full h-12 bg-[#466cf4] hover:bg-[#3a5ce0] text-white font-semibold text-lg transition-all duration-200 hover:scale-105 active:scale-95"
+            onClick={() => console.log('Sign In button clicked', formData)}
           >
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
@@ -141,9 +149,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Social Login Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button type="button" variant="outline" className="h-12 border-gray-300 hover:bg-gray-50 bg-transparent">
+        {/* Social Login Button - Google only, full width with equal margin */}
+        <div className="flex justify-center">
+          <Button type="button" variant="outline" className="h-12 w-full max-w-md mx-auto border-gray-300 hover:bg-gray-50 bg-transparent">
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
@@ -163,12 +171,6 @@ export default function LoginPage() {
               />
             </svg>
             Google
-          </Button>
-          <Button type="button" variant="outline" className="h-12 border-gray-300 hover:bg-gray-50 bg-transparent">
-            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            Facebook
           </Button>
         </div>
 
@@ -190,5 +192,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

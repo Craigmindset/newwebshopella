@@ -1,14 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShoppingCart, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useCart } from "./ProductGrid"; // Import cart context
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState<string>("Home");
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  // Logout and redirect to home
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   // Highlight menu based on current route
   useEffect(() => {
@@ -25,10 +35,11 @@ export default function Header() {
   // Menu items with their respective routes
   const menuItems = [
     { name: "Home", href: "/" },
-    { name: "Access Loans", href: "/loans" },
+    { name: "Access Loans", href: "/access" },
     { name: "Stores", href: "/store" },
     { name: "Shopella Deals", href: "/deals" },
     { name: "About", href: "/about" },
+    ...(user ? [{ name: "Dashboard", href: "/dashboard/user" }] : []),
   ];
 
   return (
@@ -79,19 +90,33 @@ export default function Header() {
 
             {/* Auth Buttons - Desktop */}
             <div className="hidden md:flex space-x-2">
-              <Link href="/auth/login">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:bg-white/10"
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button className="bg-white text-[#466cf4] hover:bg-gray-100">
-                  Sign Up
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:bg-white/10"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login">
+                    <Button
+                      variant="ghost"
+                      className="text-white hover:bg-white/10"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button className="bg-white text-[#466cf4] hover:bg-gray-100">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button with Drawer */}
@@ -123,19 +148,31 @@ export default function Header() {
                     </Link>
                   ))}
                   <div className="flex flex-col space-y-2 pt-4 border-t border-white/20">
-                    <Link href="/auth/login">
+                    {user ? (
                       <Button
                         variant="ghost"
                         className="w-full text-white hover:bg-white/10"
+                        onClick={handleLogout}
                       >
-                        Login
+                        Logout
                       </Button>
-                    </Link>
-                    <Link href="/auth/signup">
-                      <Button className="w-full bg-white text-[#466cf4] hover:bg-gray-100">
-                        Sign Up
-                      </Button>
-                    </Link>
+                    ) : (
+                      <>
+                        <Link href="/auth/login">
+                          <Button
+                            variant="ghost"
+                            className="w-full text-white hover:bg-white/10"
+                          >
+                            Login
+                          </Button>
+                        </Link>
+                        <Link href="/auth/signup">
+                          <Button className="w-full bg-white text-[#466cf4] hover:bg-gray-100">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </nav>
               </DrawerContent>

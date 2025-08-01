@@ -1,7 +1,7 @@
 "use client"
 
-// ...existing code...
 import { useCart, CartProvider } from "@/components/ProductGrid"
+import { useAuth } from "@/hooks/useAuth"
 import Image from "next/image"
 import { ShoppingCart, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ const categories = ["Phones", "Laptops", "Accessories", "TVs", "Appliances"]
 const brands = ["Apple", "Samsung", "LG", "Sony", "Dell"]
 
 export default function StorePage() {
+  const { user, loading, logout } = useAuth()
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null)
 
@@ -24,6 +25,7 @@ export default function StorePage() {
     return matchCategory && matchBrand
   })
 
+  if (loading) return <div className="p-8">Loading...</div>
   return (
     <StorePageContent
       selectedCategory={selectedCategory}
@@ -31,20 +33,22 @@ export default function StorePage() {
       selectedBrand={selectedBrand}
       setSelectedBrand={setSelectedBrand}
       filteredProducts={filteredProducts}
+      user={user}
+      logout={logout}
     />
   )
 }
 
-// ...existing code...
-
 import { useState } from "react"
 
-function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand, setSelectedBrand, filteredProducts }: {
+function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand, setSelectedBrand, filteredProducts, user, logout }: {
   selectedCategory: string | null,
   setSelectedCategory: (cat: string | null) => void,
   selectedBrand: string | null,
   setSelectedBrand: (brand: string | null) => void,
-  filteredProducts: typeof products
+  filteredProducts: typeof products,
+  user: { name: string; email: string },
+  logout: () => void
 }) {
   const { addToCart } = useCart()
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
@@ -62,6 +66,12 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
   return (
     <>
       <Header />
+      {user ? (
+        <div className="flex justify-end items-center mb-4">
+          <span className="mr-4">Logged in as <b>{user.name}</b></span>
+          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+        </div>
+      ) : null}
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-8">Shop Our Store</h1>

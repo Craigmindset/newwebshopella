@@ -3,6 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { User, Wallet, Bell, ShoppingBag, CreditCard, MapPin, Settings, LogOut, Menu, X, Plus } from "lucide-react"
+import MiniCart from "@/components/MiniCart"
+import UserHeader from "@/components/UserHeader"
+import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 
 // Mock user data - In real app, this would come from API
@@ -30,6 +33,7 @@ const recentOrders = [
 ]
 
 export default function UserDashboard() {
+  const { user, logout } = useAuth()
   const [activeTab, setActiveTab] = useState("overview")
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [showAddFunds, setShowAddFunds] = useState(false)
@@ -63,7 +67,7 @@ export default function UserDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm">Wallet Balance</p>
-                    <p className="text-2xl font-bold text-[#466cf4]">${userData.walletBalance.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-[#466cf4]">₦{userData.walletBalance.toFixed(2)}</p>
                   </div>
                   <Wallet className="h-8 w-8 text-[#466cf4]" />
                 </div>
@@ -105,7 +109,7 @@ export default function UserDashboard() {
                     {recentOrders.map((order) => (
                       <tr key={order.id} className="border-b">
                         <td className="py-3">{order.product}</td>
-                        <td className="py-3">${order.amount}</td>
+                        <td className="py-3">₦{order.amount}</td>
                         <td className="py-3">
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
@@ -138,7 +142,7 @@ export default function UserDashboard() {
                 {loanProviders.map((provider) => (
                   <div key={provider.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                     <h4 className="font-semibold text-lg">{provider.name}</h4>
-                    <p className="text-gray-600">Max Amount: ${provider.maxAmount.toLocaleString()}</p>
+                    <p className="text-gray-600">Max Amount: ₦{provider.maxAmount.toLocaleString()}</p>
                     <p className="text-gray-600">Interest Rate: {provider.interestRate}</p>
                     <Button className="mt-3 bg-[#466cf4] hover:bg-[#3a5ce0]">Apply Now</Button>
                   </div>
@@ -159,7 +163,7 @@ export default function UserDashboard() {
                   Add Funds
                 </Button>
               </div>
-              <div className="text-3xl font-bold text-[#466cf4] mb-6">${userData.walletBalance.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-[#466cf4] mb-6">₦{userData.walletBalance.toFixed(2)}</div>
 
               {/* Transaction History */}
               <h4 className="font-semibold mb-3">Recent Transactions</h4>
@@ -169,14 +173,14 @@ export default function UserDashboard() {
                     <p className="font-medium">Purchase - iPhone 15 Pro</p>
                     <p className="text-sm text-gray-600">Jan 15, 2024</p>
                   </div>
-                  <span className="text-red-600 font-semibold">-$999.00</span>
+                  <span className="text-red-600 font-semibold">-₦999.00</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <div>
                     <p className="font-medium">Wallet Top-up</p>
                     <p className="text-sm text-gray-600">Jan 10, 2024</p>
                   </div>
-                  <span className="text-green-600 font-semibold">+$1,500.00</span>
+                  <span className="text-green-600 font-semibold">+₦1,500.00</span>
                 </div>
               </div>
             </div>
@@ -222,37 +226,10 @@ export default function UserDashboard() {
     }
   }
 
+  if (!user) return <div className="p-8">Please log in to access your dashboard.</div>
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-            <Link href="/" className="text-2xl font-bold text-[#466cf4]">
-              Shopella
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <img src={userData.avatar || "/placeholder.svg"} alt="Profile" className="h-8 w-8 rounded-full" />
-              <span className="hidden md:block font-medium">{userData.name}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <UserHeader user={user} onLogout={logout} />
 
       <div className="flex">
         {/* Sidebar */}

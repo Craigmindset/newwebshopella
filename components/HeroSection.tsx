@@ -69,6 +69,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   className="bg-green-900 hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
+                  onClick={() => window.location.href = "/getloans"}
                 >
                   Get Loans
                 </Button>
