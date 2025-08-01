@@ -77,6 +77,7 @@ export default function HeroSection() {
                   size="lg"
                   variant="outline"
                   className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 bg-transparent"
+                  onClick={() => window.location.href = "/store"}
                 >
                   Visit Store
                 </Button>
