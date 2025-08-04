@@ -1086,7 +1086,9 @@ export default function UserDashboard() {
               />
               <div>
                 <h3 className="font-semibold">{userData.name}</h3>
-                <p className="text-sm text-gray-600">{userData.email}</p>
+                <p className="text-xs text-gray-600">
+                  {user?.email || userData.email}
+                </p>
               </div>
             </div>
 
