@@ -98,6 +98,14 @@ export default function UserDashboard() {
   const [fundAmount, setFundAmount] = useState("");
   // Filter state for recent orders
   const [orderFilter, setOrderFilter] = useState({ date: "", product: "" });
+  // Filter state for My Orders tab
+  const [ordersFilter, setOrdersFilter] = useState({
+    product: "",
+    status: "",
+    payment: "",
+    dateFrom: "",
+    dateTo: "",
+  });
 
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: User },
@@ -119,8 +127,8 @@ export default function UserDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "overview":
-        // Filtered orders
+      case "overview": {
+        // ...existing code for overview...
         const filteredOrders = recentOrders.filter((order) => {
           const matchesProduct = orderFilter.product
             ? order.product
@@ -134,45 +142,8 @@ export default function UserDashboard() {
         });
         return (
           <div className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* ...existing code... */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm">Wallet Balance</p>
-                    <p className="text-lg font-bold text-[#466cf4]">
-                      ₦{userData.walletBalance.toFixed(2)}
-                    </p>
-                  </div>
-                  <Wallet className="h-8 w-8 text-[#466cf4]" />
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm">Total Orders</p>
-                    <p className="text-lg font-bold text-green-600">
-                      {userData.totalOrders}
-                    </p>
-                  </div>
-                  <ShoppingBag className="h-8 w-8 text-green-600" />
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm">Pending Orders</p>
-                    <p className="text-lg font-bold text-orange-600">
-                      {userData.pendingOrders}
-                    </p>
-                  </div>
-                  <Bell className="h-8 w-8 text-orange-600" />
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Orders with Filter */}
+            {/* ...existing code for stats cards... */}
+            {/* ...existing code for recent orders and filter... */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Orders</h3>
               {/* Filter UI */}
@@ -260,6 +231,254 @@ export default function UserDashboard() {
             </div>
           </div>
         );
+      }
+      case "orders": {
+        // Modern My Orders tab: detailed transaction history with advanced filters
+        // Demo: add payment method and orderId to recentOrders
+        const orders = recentOrders.map((order, idx) => ({
+          ...order,
+          payment: idx % 2 === 0 ? "Card" : "Wallet",
+          orderId: `ORD-${1000 + order.id}`,
+        }));
+        const filteredOrders = orders.filter((order) => {
+          const matchesProduct = ordersFilter.product
+            ? order.product
+                .toLowerCase()
+                .includes(ordersFilter.product.toLowerCase())
+            : true;
+          const matchesStatus = ordersFilter.status
+            ? order.status === ordersFilter.status
+            : true;
+          const matchesPayment = ordersFilter.payment
+            ? order.payment === ordersFilter.payment
+            : true;
+          const matchesDateFrom = ordersFilter.dateFrom
+            ? order.date >= ordersFilter.dateFrom
+            : true;
+          const matchesDateTo = ordersFilter.dateTo
+            ? order.date <= ordersFilter.dateTo
+            : true;
+          return (
+            matchesProduct &&
+            matchesStatus &&
+            matchesPayment &&
+            matchesDateFrom &&
+            matchesDateTo
+          );
+        });
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-4">My Orders</h3>
+              {/* Advanced Filters */}
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">Product</label>
+                  <input
+                    type="text"
+                    value={ordersFilter.product}
+                    onChange={(e) =>
+                      setOrdersFilter((prev) => ({
+                        ...prev,
+                        product: e.target.value,
+                      }))
+                    }
+                    placeholder="Search product name"
+                    className="border p-2 rounded-lg focus:outline-none focus:border-[#466cf4]"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">Status</label>
+                  <select
+                    value={ordersFilter.status}
+                    onChange={(e) =>
+                      setOrdersFilter((prev) => ({
+                        ...prev,
+                        status: e.target.value,
+                      }))
+                    }
+                    className="border p-2 rounded-lg"
+                  >
+                    <option value="">All</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Processing">Processing</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">
+                    Payment Method
+                  </label>
+                  <select
+                    value={ordersFilter.payment}
+                    onChange={(e) =>
+                      setOrdersFilter((prev) => ({
+                        ...prev,
+                        payment: e.target.value,
+                      }))
+                    }
+                    className="border p-2 rounded-lg"
+                  >
+                    <option value="">All</option>
+                    <option value="Card">Card</option>
+                    <option value="Wallet">Wallet</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">Date From</label>
+                  <input
+                    type="date"
+                    value={ordersFilter.dateFrom}
+                    onChange={(e) =>
+                      setOrdersFilter((prev) => ({
+                        ...prev,
+                        dateFrom: e.target.value,
+                      }))
+                    }
+                    className="border p-2 rounded-lg"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">Date To</label>
+                  <input
+                    type="date"
+                    value={ordersFilter.dateTo}
+                    onChange={(e) =>
+                      setOrdersFilter((prev) => ({
+                        ...prev,
+                        dateTo: e.target.value,
+                      }))
+                    }
+                    className="border p-2 rounded-lg"
+                  />
+                </div>
+              </div>
+              <hr className="my-4 border-gray-200" />
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">Order ID</th>
+                      <th className="text-left py-2">Product</th>
+                      <th className="text-left py-2">Amount</th>
+                      <th className="text-left py-2">Status</th>
+                      <th className="text-left py-2">Payment</th>
+                      <th className="text-left py-2">Date</th>
+                      <th className="text-left py-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredOrders.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={7}
+                          className="py-3 text-center text-gray-500"
+                        >
+                          No orders found.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredOrders.map((order) => (
+                        <tr
+                          key={order.orderId}
+                          className="border-b hover:bg-gray-50 transition"
+                        >
+                          <td className="py-3 font-mono">{order.orderId}</td>
+                          <td className="py-3">{order.product}</td>
+                          <td className="py-3">₦{order.amount}</td>
+                          <td className="py-3">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                order.status === "Delivered"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.status === "Shipped"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-orange-100 text-orange-800"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="py-3 flex items-center gap-2">
+                            {order.payment === "Card" ? (
+                              <span className="inline-flex items-center gap-1">
+                                <CreditCard className="h-4 w-4" /> Card
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1">
+                                <Wallet className="h-4 w-4" /> Wallet
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3">{order.date}</td>
+                          <td className="py-3 flex gap-2">
+                            <Button size="sm" variant="outline">
+                              Invoice
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              Track
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      case "account": {
+        // Simple UI for Account Settings
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Profile Information
+              </h3>
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src={userData.avatar}
+                  alt="Avatar"
+                  className="h-16 w-16 rounded-full"
+                />
+                <div>
+                  <div className="font-semibold text-lg">{userData.name}</div>
+                  <div className="text-gray-600">{userData.email}</div>
+                  <div className="text-gray-600">{userData.phone}</div>
+                </div>
+              </div>
+              <Button className="bg-[#466cf4] hover:bg-[#3a5ce0]">
+                Edit Profile
+              </Button>
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Change Password</h3>
+              <form className="space-y-4 max-w-md">
+                <input
+                  type="password"
+                  placeholder="Current Password"
+                  className="border p-2 rounded-lg w-full"
+                />
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  className="border p-2 rounded-lg w-full"
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm New Password"
+                  className="border p-2 rounded-lg w-full"
+                />
+                <Button className="bg-[#466cf4] hover:bg-[#3a5ce0] w-full">
+                  Update Password
+                </Button>
+              </form>
+            </div>
+          </div>
+        );
+      }
 
       case "loans":
         // Loan Requests tab: application form, status tracker
