@@ -1,5 +1,5 @@
 "use client";
-import Footer from "@/components/Footer";
+
 import { ShieldCheck, Truck, BadgeCheck, Coins } from "lucide-react";
 import { Poppins } from "next/font/google";
 
@@ -82,7 +82,6 @@ export default function WhyChooseUs() {
           ))}
         </div>
       </section>
-      <Footer />
     </>
   );
 }

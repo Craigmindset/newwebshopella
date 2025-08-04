@@ -1,31 +1,33 @@
-"use client"
+"use client";
 
-import { useCart, CartProvider } from "@/components/ProductGrid"
-import { useAuth } from "@/hooks/useAuth"
-import Image from "next/image"
-import { ShoppingCart, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import { useCart, CartProvider } from "@/components/ProductGrid";
+import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
+import { ShoppingCart, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-import { products } from "@/lib/products"
+import { products } from "@/lib/products";
 
-const categories = ["Phones", "Laptops", "Accessories", "TVs", "Appliances"]
-const brands = ["Apple", "Samsung", "LG", "Sony", "Dell"]
+const categories = ["Phones", "Laptops", "Accessories", "TVs", "Appliances"];
+const brands = ["Apple", "Samsung", "LG", "Sony", "Dell"];
 
 export default function StorePage() {
-  const { user, loading, logout } = useAuth()
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(null)
+  const { user, loading, logout } = useAuth();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
   // Filter products by selected category and brand
-  const filteredProducts = products.filter(product => {
-    const matchCategory = selectedCategory ? product.category === selectedCategory : true
-    const matchBrand = selectedBrand ? product.brand === selectedBrand : true
-    return matchCategory && matchBrand
-  })
+  const filteredProducts = products.filter((product) => {
+    const matchCategory = selectedCategory
+      ? product.category === selectedCategory
+      : true;
+    const matchBrand = selectedBrand ? product.brand === selectedBrand : true;
+    return matchCategory && matchBrand;
+  });
 
-  if (loading) return <div className="p-8">Loading...</div>
+  if (loading) return <div className="p-8">Loading...</div>;
   return (
     <StorePageContent
       selectedCategory={selectedCategory}
@@ -36,52 +38,73 @@ export default function StorePage() {
       user={user}
       logout={logout}
     />
-  )
+  );
 }
 
-import { useState } from "react"
+import { useState } from "react";
 
-function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand, setSelectedBrand, filteredProducts, user, logout }: {
-  selectedCategory: string | null,
-  setSelectedCategory: (cat: string | null) => void,
-  selectedBrand: string | null,
-  setSelectedBrand: (brand: string | null) => void,
-  filteredProducts: typeof products,
-  user: { name: string; email: string },
-  logout: () => void
+function StorePageContent({
+  selectedCategory,
+  setSelectedCategory,
+  selectedBrand,
+  setSelectedBrand,
+  filteredProducts,
+  user,
+  logout,
+}: {
+  selectedCategory: string | null;
+  setSelectedCategory: (cat: string | null) => void;
+  selectedBrand: string | null;
+  setSelectedBrand: (brand: string | null) => void;
+  filteredProducts: typeof products;
+  user: { name: string; email: string };
+  logout: () => void;
 }) {
-  const { addToCart } = useCart()
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const { addToCart } = useCart();
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleAddToCart = (product: any) => {
-    addToCart({ ...product, quantity })
-    setShowSuccessMessage(true)
-    setTimeout(() => setShowSuccessMessage(false), 2000)
-    setSelectedProduct(null)
-  }
+    addToCart({ ...product, quantity });
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 2000);
+    setSelectedProduct(null);
+  };
 
   return (
     <>
       <Header />
       {user ? (
         <div className="flex justify-end items-center mb-4">
-          <span className="mr-4">Logged in as <b>{user.name}</b></span>
-          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+          <span className="mr-4">
+            Logged in as <b>{user.name}</b>
+          </span>
+          <button
+            onClick={logout}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Logout
+          </button>
         </div>
       ) : null}
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-8">Shop Our Store</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">
+            Shop Our Store
+          </h1>
           {/* Category Filter */}
           <div className="flex flex-wrap gap-2 justify-center mb-6">
-            {categories.map(category => (
+            {categories.map((category) => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
+                onClick={() =>
+                  setSelectedCategory(
+                    selectedCategory === category ? null : category
+                  )
+                }
               >
                 {category}
               </Button>
@@ -89,11 +112,13 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
           </div>
           {/* Brand Filter */}
           <div className="flex flex-wrap gap-2 justify-center mb-10">
-            {brands.map(brand => (
+            {brands.map((brand) => (
               <Button
                 key={brand}
                 variant={selectedBrand === brand ? "default" : "outline"}
-                onClick={() => setSelectedBrand(selectedBrand === brand ? null : brand)}
+                onClick={() =>
+                  setSelectedBrand(selectedBrand === brand ? null : brand)
+                }
               >
                 {brand}
               </Button>
@@ -101,7 +126,7 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
           </div>
           {/* Product Grid (same UI as ProductGrid) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {filteredProducts.map(product => (
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
@@ -132,9 +157,15 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2 truncate">{product.name}</h3>
-                  <p className="text-[#466cf4] font-bold text-lg">₦{product.price}</p>
-                  <p className="text-sm text-gray-500">{product.brand} &middot; {product.category}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2 truncate">
+                    {product.name}
+                  </h3>
+                  <p className="text-[#466cf4] font-bold text-lg">
+                    ₦{product.price}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {product.brand} &middot; {product.category}
+                  </p>
                 </div>
               </div>
             ))}
@@ -145,7 +176,10 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
               <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between items-center p-6 border-b">
                   <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
-                  <button onClick={() => setSelectedProduct(null)} className="text-gray-500 hover:text-gray-700">
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
                     <span className="text-xl">×</span>
                   </button>
                 </div>
@@ -154,7 +188,10 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
                   <div>
                     <div className="mb-4">
                       <Image
-                        src={selectedProduct.gallery?.[selectedImage] || "/placeholder.svg"}
+                        src={
+                          selectedProduct.gallery?.[selectedImage] ||
+                          "/placeholder.svg"
+                        }
                         alt={selectedProduct.name}
                         width={400}
                         height={400}
@@ -162,37 +199,49 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
                       />
                     </div>
                     <div className="flex space-x-2 overflow-x-auto">
-                      {selectedProduct.gallery?.map((image: string, index: number) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedImage(index)}
-                          className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden ${
-                            selectedImage === index ? "border-[#466cf4]" : "border-gray-200"
-                          }`}
-                        >
-                          <Image
-                            src={image || "/placeholder.svg"}
-                            alt={`${selectedProduct.name} ${index + 1}`}
-                            width={64}
-                            height={64}
-                            className="w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
+                      {selectedProduct.gallery?.map(
+                        (image: string, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedImage(index)}
+                            className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden ${
+                              selectedImage === index
+                                ? "border-[#466cf4]"
+                                : "border-gray-200"
+                            }`}
+                          >
+                            <Image
+                              src={image || "/placeholder.svg"}
+                              alt={`${selectedProduct.name} ${index + 1}`}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
                   {/* Product Details */}
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Description</h3>
-                      <p className="text-gray-600">{selectedProduct.description}</p>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Description
+                      </h3>
+                      <p className="text-gray-600">
+                        {selectedProduct.description}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Specifications</h3>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Specifications
+                      </h3>
                       <ul className="list-disc list-inside space-y-1 text-gray-600">
-                        {selectedProduct.specifications?.map((spec: string, index: number) => (
-                          <li key={index}>{spec}</li>
-                        ))}
+                        {selectedProduct.specifications?.map(
+                          (spec: string, index: number) => (
+                            <li key={index}>{spec}</li>
+                          )
+                        )}
                       </ul>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -205,13 +254,18 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
                           -
                         </button>
                         <span className="px-4 py-1 border-x">{quantity}</span>
-                        <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-1 hover:bg-gray-100">
+                        <button
+                          onClick={() => setQuantity(quantity + 1)}
+                          className="px-3 py-1 hover:bg-gray-100"
+                        >
                           +
                         </button>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-[#466cf4]">₦{selectedProduct.price}</span>
+                      <span className="text-3xl font-bold text-[#466cf4]">
+                        ₦{selectedProduct.price}
+                      </span>
                       <div className="relative">
                         <Button
                           onClick={() => handleAddToCart(selectedProduct)}
@@ -235,5 +289,5 @@ function StorePageContent({ selectedCategory, setSelectedCategory, selectedBrand
       </div>
       <Footer />
     </>
-  )
+  );
 }
