@@ -68,11 +68,14 @@ export default function UserDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [fundAmount, setFundAmount] = useState("");
+  // Filter state for recent orders
+  const [orderFilter, setOrderFilter] = useState({ date: "", product: "" });
 
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: User },
     { id: "orders", label: "My Orders", icon: ShoppingBag },
     { id: "loans", label: "Loan Requests", icon: CreditCard },
+    { id: "myloans", label: "My Loans", icon: CreditCard },
     { id: "wallet", label: "Wallet", icon: Wallet },
     { id: "track", label: "Track Order", icon: MapPin },
     { id: "account", label: "Account Settings", icon: Settings },
@@ -89,10 +92,23 @@ export default function UserDashboard() {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
+        // Filtered orders
+        const filteredOrders = recentOrders.filter((order) => {
+          const matchesProduct = orderFilter.product
+            ? order.product
+                .toLowerCase()
+                .includes(orderFilter.product.toLowerCase())
+            : true;
+          const matchesDate = orderFilter.date
+            ? order.date === orderFilter.date
+            : true;
+          return matchesProduct && matchesDate;
+        });
         return (
           <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* ...existing code... */}
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
@@ -128,9 +144,45 @@ export default function UserDashboard() {
               </div>
             </div>
 
-            {/* Recent Orders */}
+            {/* Recent Orders with Filter */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Orders</h3>
+              {/* Filter UI */}
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">
+                    Filter by Product
+                  </label>
+                  <input
+                    type="text"
+                    value={orderFilter.product}
+                    onChange={(e) =>
+                      setOrderFilter((prev) => ({
+                        ...prev,
+                        product: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter product name"
+                    className="border p-2 rounded-lg focus:outline-none focus:border-[#466cf4]"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-1">
+                    Filter by Date
+                  </label>
+                  <input
+                    type="date"
+                    value={orderFilter.date}
+                    onChange={(e) =>
+                      setOrderFilter((prev) => ({
+                        ...prev,
+                        date: e.target.value,
+                      }))
+                    }
+                    className="border p-2 rounded-lg focus:outline-none focus:border-[#466cf4]"
+                  />
+                </div>
+              </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -142,26 +194,37 @@ export default function UserDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {recentOrders.map((order) => (
-                      <tr key={order.id} className="border-b">
-                        <td className="py-3">{order.product}</td>
-                        <td className="py-3">₦{order.amount}</td>
-                        <td className="py-3">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs ${
-                              order.status === "Delivered"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "Shipped"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-orange-100 text-orange-800"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
+                    {filteredOrders.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="py-3 text-center text-gray-500"
+                        >
+                          No orders found.
                         </td>
-                        <td className="py-3">{order.date}</td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredOrders.map((order) => (
+                        <tr key={order.id} className="border-b">
+                          <td className="py-3">{order.product}</td>
+                          <td className="py-3">₦{order.amount}</td>
+                          <td className="py-3">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                order.status === "Delivered"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.status === "Shipped"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-orange-100 text-orange-800"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="py-3">{order.date}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
