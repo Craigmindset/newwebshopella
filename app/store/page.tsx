@@ -1,13 +1,13 @@
 "use client";
 
-import { useCart, CartProvider } from "@/components/ProductGrid";
-import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/components/ProductGrid";
+import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
 import { products } from "@/lib/products";
 
 const categories = ["Phones", "Laptops", "Accessories", "TVs", "Appliances"];
@@ -18,7 +18,6 @@ export default function StorePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-  // Filter products by selected category and brand
   const filteredProducts = products.filter((product) => {
     const matchCategory = selectedCategory
       ? product.category === selectedCategory
@@ -28,56 +27,13 @@ export default function StorePage() {
   });
 
   if (loading) return <div className="p-8">Loading...</div>;
-  return (
-    <StorePageContent
-      selectedCategory={selectedCategory}
-      setSelectedCategory={setSelectedCategory}
-      selectedBrand={selectedBrand}
-      setSelectedBrand={setSelectedBrand}
-      filteredProducts={filteredProducts}
-      user={user}
-      logout={logout}
-    />
-  );
-}
-
-import { useState } from "react";
-
-function StorePageContent({
-  selectedCategory,
-  setSelectedCategory,
-  selectedBrand,
-  setSelectedBrand,
-  filteredProducts,
-  user,
-  logout,
-}: {
-  selectedCategory: string | null;
-  setSelectedCategory: (cat: string | null) => void;
-  selectedBrand: string | null;
-  setSelectedBrand: (brand: string | null) => void;
-  filteredProducts: typeof products;
-  user: { name: string; email: string };
-  logout: () => void;
-}) {
-  const { addToCart } = useCart();
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-  const handleAddToCart = (product: any) => {
-    addToCart({ ...product, quantity });
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 2000);
-    setSelectedProduct(null);
-  };
 
   return (
     <>
       <Header />
-      {user ? (
-        <div className="flex justify-end items-center mb-4">
+
+      {user && (
+        <div className="flex justify-end items-center mb-4 max-w-7xl mx-auto px-4">
           <span className="mr-4">
             Logged in as <b>{user.name}</b>
           </span>
@@ -88,13 +44,14 @@ function StorePageContent({
             Logout
           </button>
         </div>
-      ) : null}
-      <div className="min-h-screen bg-gray-50 py-12">
+      )}
+
+      <main className="bg-gray-50 min-h-screen py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-8">
             Shop Our Store
           </h1>
-          {/* Category Filter */}
+
           <div className="flex flex-wrap gap-2 justify-center mb-6">
             {categories.map((category) => (
               <Button
@@ -110,7 +67,7 @@ function StorePageContent({
               </Button>
             ))}
           </div>
-          {/* Brand Filter */}
+
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             {brands.map((brand) => (
               <Button
@@ -124,170 +81,153 @@ function StorePageContent({
               </Button>
             ))}
           </div>
-          {/* Product Grid (same UI as ProductGrid) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
-              >
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <Image
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.name}
-                    width={300}
-                    height={300}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
-                    <button
-                      onClick={() => setSelectedProduct(product)}
-                      className="bg-white text-gray-900 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                      title="Quick View"
-                    >
-                      <Eye className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-[#466cf4] text-white p-2 rounded-full hover:bg-[#3a5ce0] transition-colors"
-                      title="Add to Cart"
-                    >
-                      <ShoppingCart className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2 truncate">
-                    {product.name}
-                  </h3>
-                  <p className="text-[#466cf4] font-bold text-lg">
-                    ₦{product.price}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {product.brand} &middot; {product.category}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* Product Modal for Quick View and Purchase Flow */}
-          {selectedProduct && (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between items-center p-6 border-b">
-                  <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
-                  <button
-                    onClick={() => setSelectedProduct(null)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <span className="text-xl">×</span>
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                  {/* Product Gallery */}
-                  <div>
-                    <div className="mb-4">
-                      <Image
-                        src={
-                          selectedProduct.gallery?.[selectedImage] ||
-                          "/placeholder.svg"
-                        }
-                        alt={selectedProduct.name}
-                        width={400}
-                        height={400}
-                        className="w-full h-80 object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="flex space-x-2 overflow-x-auto">
-                      {selectedProduct.gallery?.map(
-                        (image: string, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedImage(index)}
-                            className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden ${
-                              selectedImage === index
-                                ? "border-[#466cf4]"
-                                : "border-gray-200"
-                            }`}
-                          >
-                            <Image
-                              src={image || "/placeholder.svg"}
-                              alt={`${selectedProduct.name} ${index + 1}`}
-                              width={64}
-                              height={64}
-                              className="w-full h-full object-cover"
-                            />
-                          </button>
-                        )
-                      )}
-                    </div>
-                  </div>
-                  {/* Product Details */}
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2">
-                        Description
-                      </h3>
-                      <p className="text-gray-600">
-                        {selectedProduct.description}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2">
-                        Specifications
-                      </h3>
-                      <ul className="list-disc list-inside space-y-1 text-gray-600">
-                        {selectedProduct.specifications?.map(
-                          (spec: string, index: number) => (
-                            <li key={index}>{spec}</li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <label className="font-semibold">Quantity:</label>
-                      <div className="flex items-center border rounded">
-                        <button
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                          className="px-3 py-1 hover:bg-gray-100"
-                        >
-                          -
-                        </button>
-                        <span className="px-4 py-1 border-x">{quantity}</span>
-                        <button
-                          onClick={() => setQuantity(quantity + 1)}
-                          className="px-3 py-1 hover:bg-gray-100"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-[#466cf4]">
-                        ₦{selectedProduct.price}
-                      </span>
-                      <div className="relative">
-                        <Button
-                          onClick={() => handleAddToCart(selectedProduct)}
-                          className="bg-[#466cf4] hover:bg-[#3a5ce0] text-white px-8 py-3"
-                        >
-                          Add to Cart
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {showSuccessMessage && (
-            <div className="fixed top-6 right-6 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
-              Added to cart!
-            </div>
-          )}
+
+          <ProductSection
+            title="Daily Picks"
+            products={filteredProducts.slice(0, 8)}
+          />
+          <PromoBanner
+            text="Find joy in every deal, Shop on Shopella"
+            image="/banner1.jpg"
+          />
+          <ProductSection
+            title="Fresh Finds"
+            products={filteredProducts.slice(8, 16)}
+          />
+          <ProductSection
+            title="Electronics"
+            products={filteredProducts
+              .filter((p) => p.category === "TVs")
+              .slice(0, 8)}
+          />
+          <PromoBanner
+            text="Find affordable food items on Shopella"
+            image="/banner2.jpg"
+          />
+          <InterestSection />
         </div>
-      </div>
+      </main>
+
       <Footer />
     </>
+  );
+}
+
+function ProductSection({
+  title,
+  products,
+}: {
+  title: string;
+  products: typeof products;
+}) {
+  const { addToCart } = useCart();
+
+  return (
+    <section className="mb-12">
+      <h2 className="text-2xl font-bold mb-4">{title}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white rounded-lg shadow group">
+            <div className="relative overflow-hidden rounded-t-lg">
+              <Image
+                src={product.image || "/placeholder.svg"}
+                alt={product.name}
+                width={300}
+                height={300}
+                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
+                <button className="bg-white p-2 rounded-full">
+                  <Eye className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => addToCart(product)}
+                  className="bg-[#466cf4] text-white p-2 rounded-full"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            <div className="p-3">
+              <h3 className="font-semibold truncate">{product.name}</h3>
+              <p className="text-[#466cf4] font-bold">₦{product.price}</p>
+              <p className="text-sm text-gray-500">
+                {product.brand} · {product.category}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PromoBanner({ text, image }: { text: string; image: string }) {
+  return (
+    <div className="my-12 bg-[#F0F6FF] rounded-lg p-6 text-center">
+      <h3 className="text-lg font-bold">{text}</h3>
+      <Image
+        src={image}
+        alt="Banner"
+        width={900}
+        height={200}
+        className="mx-auto mt-4 rounded"
+      />
+    </div>
+  );
+}
+
+function InterestSection() {
+  const interests = [
+    {
+      id: 1,
+      title: "Electronics Deals",
+      description: "Latest gadgets and more",
+      image: "/icons/tech.png",
+    },
+    {
+      id: 2,
+      title: "Home Essentials",
+      description: "Shop your daily needs",
+      image: "/icons/home.png",
+    },
+    {
+      id: 3,
+      title: "Fashion",
+      description: "Trendy styles",
+      image: "/icons/fashion.png",
+    },
+    {
+      id: 4,
+      title: "Real Estate",
+      description: "Buy & rent properties",
+      image: "/icons/home2.png",
+    },
+  ];
+
+  return (
+    <div className="py-10">
+      <h2 className="text-xl font-bold mb-6 text-center">
+        Follow your interest
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        {interests.map((interest) => (
+          <div
+            key={interest.id}
+            className="border p-4 rounded text-center bg-white shadow"
+          >
+            <Image
+              src={interest.image}
+              alt={interest.title}
+              width={80}
+              height={80}
+              className="mx-auto mb-2"
+            />
+            <h4 className="font-semibold">{interest.title}</h4>
+            <p className="text-sm text-gray-500">{interest.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

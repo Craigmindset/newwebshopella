@@ -43,43 +43,53 @@ const features = [
 export default function WhyChooseUs() {
   return (
     <>
-      <section className="bg-white py-16 px-4 md:px-8 lg:px-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-900">
-            Why choose us?
-          </h2>
-          <div className="h-6" />
-          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
-            Shopella isn’t just another online store. We’re your trusted
-            shopping partner. Here’s why thousands choose us every day:
-          </p>
-        </div>
+      <section
+        className="relative py-16 px-4 md:px-8 lg:px-16"
+        style={{
+          backgroundImage: "url(/background-img.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/80 pointer-events-none" />
+        <div className="relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-900">
+              Why choose us?
+            </h2>
+            <div className="h-6" />
+            <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
+              Shopella isn’t just another online store. We’re your trusted
+              shopping partner. Here’s why thousands choose us every day:
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, idx) => (
-            <div
-              key={idx}
-              className={`rounded-xl p-6 border ${feature.bgColor} shadow-sm transition-transform hover:scale-105`}
-            >
-              <div className="flex items-center justify-center mb-4">
-                <div className="bg-white rounded-full p-4 shadow">
-                  {feature.icon}
-                </div>
-              </div>
-              <h3
-                className="font-semibold text-[16px] text-gray-800 mb-2 text-center"
-                style={{
-                  fontFamily: poppins.style.fontFamily,
-                  letterSpacing: "-0.04em",
-                }}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, idx) => (
+              <div
+                key={idx}
+                className={`rounded-xl p-6 border ${feature.bgColor} shadow-sm transition-transform hover:scale-105`}
               >
-                {feature.title}
-              </h3>
-              <p className="text-sm text-gray-700 text-center">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-white rounded-full p-4 shadow">
+                    {feature.icon}
+                  </div>
+                </div>
+                <h3
+                  className="font-semibold text-[16px] text-gray-800 mb-2 text-center"
+                  style={{
+                    fontFamily: poppins.style.fontFamily,
+                    letterSpacing: "-0.04em",
+                  }}
+                >
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-gray-700 text-center">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </>
