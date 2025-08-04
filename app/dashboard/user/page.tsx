@@ -38,6 +38,34 @@ const loanProviders = [
   { id: 4, name: "EasyMoney", maxAmount: 2000, interestRate: "18%" },
 ];
 
+// Mock loans data for 'My Loans' tab
+const myLoans = [
+  {
+    id: 101,
+    provider: "QuickLoan",
+    amount: 3000,
+    status: "Active",
+    nextRepayment: "2024-08-15",
+    outstanding: 1200,
+    schedule: [
+      { date: "2024-07-15", amount: 600, paid: true },
+      { date: "2024-08-15", amount: 600, paid: false },
+    ],
+  },
+  {
+    id: 102,
+    provider: "FastCredit",
+    amount: 2000,
+    status: "Completed",
+    nextRepayment: null,
+    outstanding: 0,
+    schedule: [
+      { date: "2024-06-10", amount: 1000, paid: true },
+      { date: "2024-07-10", amount: 1000, paid: true },
+    ],
+  },
+];
+
 const recentOrders = [
   {
     id: 1,
@@ -183,6 +211,7 @@ export default function UserDashboard() {
                   />
                 </div>
               </div>
+              <hr className="my-4 border-gray-200" />
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -233,31 +262,183 @@ export default function UserDashboard() {
         );
 
       case "loans":
+        // Loan Requests tab: application form, status tracker
         return (
           <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Apply for a Loan</h3>
+              <form className="flex flex-col md:flex-row gap-4">
+                <select className="border p-2 rounded-lg w-full md:w-1/3">
+                  <option value="">Select Provider</option>
+                  {loanProviders.map((provider) => (
+                    <option key={provider.id} value={provider.name}>
+                      {provider.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  className="border p-2 rounded-lg w-full md:w-1/3"
+                />
+                <select className="border p-2 rounded-lg w-full md:w-1/3">
+                  <option value="">Repayment Period</option>
+                  <option value="3">3 months</option>
+                  <option value="6">6 months</option>
+                  <option value="12">12 months</option>
+                </select>
+                <Button className="bg-[#466cf4] hover:bg-[#3a5ce0]">
+                  Submit Application
+                </Button>
+              </form>
+            </div>
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">
-                Available Loan Providers
+                Loan Application Status
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {loanProviders.map((provider) => (
-                  <div
-                    key={provider.id}
-                    className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
-                    <h4 className="font-semibold text-lg">{provider.name}</h4>
-                    <p className="text-gray-600">
-                      Max Amount: ₦{provider.maxAmount.toLocaleString()}
-                    </p>
-                    <p className="text-gray-600">
-                      Interest Rate: {provider.interestRate}
-                    </p>
-                    <Button className="mt-3 bg-[#466cf4] hover:bg-[#3a5ce0]">
-                      Apply Now
-                    </Button>
-                  </div>
-                ))}
-              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Provider</th>
+                    <th className="text-left py-2">Amount</th>
+                    <th className="text-left py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Demo: show mock status for submitted applications */}
+                  <tr>
+                    <td className="py-3">QuickLoan</td>
+                    <td className="py-3">₦3,000</td>
+                    <td className="py-3">
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">
+                        Pending
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-3">FastCredit</td>
+                    <td className="py-3">₦2,000</td>
+                    <td className="py-3">
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                        Approved
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      case "myloans":
+        // My Loans tab: active loans, repayment schedule, history, repay button
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Active Loans</h3>
+              {myLoans.filter((loan) => loan.status === "Active").length ===
+              0 ? (
+                <p className="text-gray-500">No active loans.</p>
+              ) : (
+                myLoans
+                  .filter((loan) => loan.status === "Active")
+                  .map((loan) => (
+                    <div key={loan.id} className="mb-4 border rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <div>
+                          <span className="font-semibold">{loan.provider}</span>{" "}
+                          &mdash; ₦{loan.amount}
+                        </div>
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                          Active
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600 mb-2">
+                        Outstanding: ₦{loan.outstanding}
+                      </div>
+                      <div className="text-sm text-gray-600 mb-2">
+                        Next Repayment: {loan.nextRepayment}
+                      </div>
+                      <Button className="bg-[#466cf4] hover:bg-[#3a5ce0]">
+                        Repay Now
+                      </Button>
+                    </div>
+                  ))
+              )}
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Repayment Schedule</h3>
+              {myLoans.filter((loan) => loan.status === "Active").length ===
+              0 ? (
+                <p className="text-gray-500">No repayment schedule.</p>
+              ) : (
+                myLoans
+                  .filter((loan) => loan.status === "Active")
+                  .map((loan) => (
+                    <table key={loan.id} className="w-full mb-4">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-2">Date</th>
+                          <th className="text-left py-2">Amount</th>
+                          <th className="text-left py-2">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loan.schedule.map((item, idx) => (
+                          <tr key={idx} className="border-b">
+                            <td className="py-3">{item.date}</td>
+                            <td className="py-3">₦{item.amount}</td>
+                            <td className="py-3">
+                              {item.paid ? (
+                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                                  Paid
+                                </span>
+                              ) : (
+                                <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">
+                                  Due
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ))
+              )}
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-4">Loan History</h3>
+              {myLoans.length === 0 ? (
+                <p className="text-gray-500">No loan history.</p>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">Provider</th>
+                      <th className="text-left py-2">Amount</th>
+                      <th className="text-left py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myLoans.map((loan) => (
+                      <tr key={loan.id} className="border-b">
+                        <td className="py-3">{loan.provider}</td>
+                        <td className="py-3">₦{loan.amount}</td>
+                        <td className="py-3">
+                          {loan.status === "Completed" ? (
+                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                              Completed
+                            </span>
+                          ) : (
+                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                              Active
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         );
