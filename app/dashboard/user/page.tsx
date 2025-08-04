@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Plus,
+  HelpCircle,
 } from "lucide-react";
 import MiniCart from "@/components/MiniCart";
 import UserHeader from "@/components/UserHeader";
@@ -91,6 +92,10 @@ const recentOrders = [
 ];
 
 export default function UserDashboard() {
+  // Contact Support Modal State
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [supportForm, setSupportForm] = useState({ subject: "", message: "" });
+  const [supportStatus, setSupportStatus] = useState("");
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -107,11 +112,22 @@ export default function UserDashboard() {
     dateTo: "",
   });
 
+  // Edit Profile Modal State
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editProfile, setEditProfile] = useState({
+    name: userData.name,
+    email: userData.email,
+    phone: userData.phone,
+    avatar: userData.avatar,
+    avatarFile: null,
+  });
+  const [editError, setEditError] = useState("");
+
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: User },
     { id: "orders", label: "My Orders", icon: ShoppingBag },
     { id: "loans", label: "Loan Requests", icon: CreditCard },
-    { id: "myloans", label: "My Loans", icon: CreditCard },
+    { id: "myloans", label: "My Loans", icon: Bell }, // Changed icon
     { id: "wallet", label: "Wallet", icon: Wallet },
     { id: "track", label: "Track Order", icon: MapPin },
     { id: "account", label: "Account Settings", icon: Settings },
@@ -433,7 +449,7 @@ export default function UserDashboard() {
         // Simple UI for Account Settings
         return (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-blue-50 rounded-lg shadow-md p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4">
                 Profile Information
               </h3>
@@ -449,11 +465,14 @@ export default function UserDashboard() {
                   <div className="text-gray-600">{userData.phone}</div>
                 </div>
               </div>
-              <Button className="bg-[#466cf4] hover:bg-[#3a5ce0]">
+              <Button
+                className="bg-[#466cf4] hover:bg-[#3a5ce0]"
+                onClick={() => setShowEditProfile(true)}
+              >
                 Edit Profile
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-yellow-50 rounded-lg shadow-md p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4">Change Password</h3>
               <form className="space-y-4 max-w-md">
                 <input
@@ -476,6 +495,215 @@ export default function UserDashboard() {
                 </Button>
               </form>
             </div>
+            {/* Contact Support Section */}
+            <div className="bg-green-50 rounded-lg shadow-md p-6 relative">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Contact Support</h3>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={() => setShowSupportModal(true)}
+                >
+                  <HelpCircle className="h-5 w-5" />
+                  Contact
+                </Button>
+              </div>
+              <div className="text-gray-600 text-sm">
+                Need help? Click the Contact button to reach support.
+              </div>
+            </div>
+
+            {/* Contact Support Modal Popup */}
+            {showSupportModal && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+                  <button
+                    className="absolute top-4 right-4"
+                    onClick={() => setShowSupportModal(false)}
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-[#466cf4]" /> Contact
+                    Support
+                  </h3>
+                  <form
+                    className="space-y-4"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!supportForm.subject || !supportForm.message) {
+                        setSupportStatus("Please fill in all fields.");
+                        return;
+                      }
+                      // Simulate send (API integration point)
+                      setSupportStatus(
+                        "Message sent! We'll get back to you soon."
+                      );
+                      setTimeout(() => {
+                        setShowSupportModal(false);
+                        setSupportStatus("");
+                        setSupportForm({ subject: "", message: "" });
+                      }, 1500);
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={userData.name}
+                      readOnly
+                      className="border p-2 rounded-lg w-full bg-gray-100"
+                      placeholder="Name"
+                    />
+                    <input
+                      type="email"
+                      value={userData.email}
+                      readOnly
+                      className="border p-2 rounded-lg w-full bg-gray-100"
+                      placeholder="Email"
+                    />
+                    <input
+                      type="text"
+                      value={supportForm.subject}
+                      onChange={(e) =>
+                        setSupportForm((prev) => ({
+                          ...prev,
+                          subject: e.target.value,
+                        }))
+                      }
+                      placeholder="Subject"
+                      className="border p-2 rounded-lg w-full"
+                    />
+                    <textarea
+                      value={supportForm.message}
+                      onChange={(e) =>
+                        setSupportForm((prev) => ({
+                          ...prev,
+                          message: e.target.value,
+                        }))
+                      }
+                      placeholder="Your message..."
+                      className="border p-2 rounded-lg w-full min-h-[100px]"
+                    />
+                    {supportStatus && (
+                      <div className="text-sm text-center text-green-600">
+                        {supportStatus}
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      className="bg-[#466cf4] hover:bg-[#3a5ce0] w-full"
+                    >
+                      Send Message
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Edit Profile Modal Popup */}
+            {showEditProfile && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+                  <button
+                    className="absolute top-4 right-4"
+                    onClick={() => setShowEditProfile(false)}
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
+                  <form
+                    className="space-y-4"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!editProfile.name || !editProfile.email) {
+                        setEditError("Name and Email are required.");
+                        return;
+                      }
+                      // Simulate save (API integration point)
+                      setShowEditProfile(false);
+                      setEditError("");
+                    }}
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <img
+                        src={editProfile.avatar}
+                        alt="Avatar Preview"
+                        className="h-16 w-16 rounded-full mb-2"
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setEditProfile((prev) => ({
+                              ...prev,
+                              avatarFile: file,
+                              avatar: URL.createObjectURL(file),
+                            }));
+                          }
+                        }}
+                        className="text-sm"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={editProfile.name}
+                      onChange={(e) =>
+                        setEditProfile((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      placeholder="Name"
+                      className="border p-2 rounded-lg w-full"
+                    />
+                    <input
+                      type="email"
+                      value={editProfile.email}
+                      onChange={(e) =>
+                        setEditProfile((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      placeholder="Email"
+                      className="border p-2 rounded-lg w-full"
+                    />
+                    <input
+                      type="text"
+                      value={editProfile.phone}
+                      onChange={(e) =>
+                        setEditProfile((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
+                      placeholder="Phone Number"
+                      className="border p-2 rounded-lg w-full"
+                    />
+                    {editError && (
+                      <div className="text-red-600 text-sm">{editError}</div>
+                    )}
+                    <div className="flex gap-2">
+                      <Button
+                        type="submit"
+                        className="bg-[#466cf4] hover:bg-[#3a5ce0] w-full"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setShowEditProfile(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         );
       }
@@ -888,7 +1116,7 @@ export default function UserDashboard() {
         <main className="flex-1 p-6">
           <div className="max-w-6xl mx-auto">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-lg font-bold text-gray-900">
                 {sidebarItems.find((item) => item.id === activeTab)?.label ||
                   "Dashboard"}
               </h1>
