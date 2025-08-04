@@ -14,7 +14,7 @@ export default function UserHeader({ user, onLogout }: { user: { name: string; e
           {/* Menu */}
           <nav className="flex items-center space-x-6">
             <Link href="/store" className="hover:underline">Store</Link>
-            <Link href="/dashboard/user" className="hover:underline">Dashboard</Link>
+            {/* Dashboard link removed */}
           </nav>
           {/* Right Section */}
           <div className="flex items-center space-x-4">

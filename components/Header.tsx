@@ -24,7 +24,7 @@ export default function Header() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const path = window.location.pathname;
-      const found = menuItems.find(item => item.href === path);
+      const found = menuItems.find((item) => item.href === path);
       if (found) setActiveMenu(found.name);
     }
   }, []);
@@ -36,7 +36,7 @@ export default function Header() {
   const menuItems = [
     { name: "Home", href: "/" },
     { name: "Access Loans", href: "/access" },
-    { name: "Stores", href: "/store" },
+    { name: "Store", href: "/store" },
     { name: "Shopella Deals", href: "/deals" },
     { name: "About", href: "/about" },
     ...(user ? [{ name: "Dashboard", href: "/dashboard/user" }] : []),

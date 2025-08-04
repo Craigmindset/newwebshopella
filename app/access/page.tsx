@@ -79,7 +79,7 @@ export default function Access() {
       <section className="bg-white min-h-screen py-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/background-img .jpg"
+            src="/background-img.jpg"
             alt="Shopella Hero Background"
             layout="fill"
             objectFit="cover"
@@ -210,6 +210,7 @@ export default function Access() {
           </div>
         </div>
       </section>
+      <WhyChooseUs />
       <Footer />
     </>
   );

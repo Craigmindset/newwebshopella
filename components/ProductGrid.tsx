@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from "react";
 import Image from "next/image";
-import { ShoppingCart, Eye, X } from "lucide-react";
+import { ShoppingCart, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Sample product data (replace this with your dynamic import later)
@@ -119,7 +119,9 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, cartCount, addToCart, getCartTotal, clearCart }}>
+    <CartContext.Provider
+      value={{ cartItems, cartCount, addToCart, getCartTotal, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -132,9 +134,20 @@ export default function ProductGrid() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { addToCart } = useCart();
 
+  const PRODUCTS_PER_VIEW = 5;
+  const totalSlides = Math.ceil(products.length / PRODUCTS_PER_VIEW);
+
   const getVisibleProducts = () => {
-    const start = currentSlide * 6;
-    return products.slice(start, start + 6);
+    const start = currentSlide * PRODUCTS_PER_VIEW;
+    return products.slice(start, start + PRODUCTS_PER_VIEW);
+  };
+
+  const goToPrevSlide = () => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const goToNextSlide = () => {
+    setCurrentSlide((prev) => (prev < totalSlides - 1 ? prev + 1 : prev));
   };
 
   const openModal = (product) => {
@@ -153,6 +166,30 @@ export default function ProductGrid() {
             <p className="text-sm text-gray-500">
               Check out the best selling gadgets
             </p>
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <button
+              onClick={goToPrevSlide}
+              disabled={currentSlide === 0}
+              className={`p-2 rounded bg-gray-200 text-gray-700 font-semibold mr-2 ${
+                currentSlide === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            {/* Removed slide indicator */}
+            <button
+              onClick={goToNextSlide}
+              disabled={currentSlide === totalSlides - 1}
+              className={`p-2 rounded bg-gray-200 text-gray-700 font-semibold ml-2 ${
+                currentSlide === totalSlides - 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
