@@ -1,41 +1,41 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 // Mock banner data - In real app, this would come from API
 const banners = [
   {
     id: 1,
-    title: "Banner 1",
-    image: "/placeholder.svg?height=300&width=1200",
+    title: "",
+    image: "/credit-direct banner.png",
     link: "/deals/banner1",
   },
   {
     id: 2,
     title: "Banner 2",
-    image: "/placeholder.svg?height=300&width=1200",
+    image: "/ad2 banner.png",
     link: "/deals/banner2",
   },
   {
     id: 3,
     title: "Banner 3",
-    image: "/placeholder.svg?height=300&width=1200",
+    image: "/credit-direct banner.png",
     link: "/deals/banner3",
   },
-]
+];
 
 export default function AdBanner() {
-  const [currentBanner, setCurrentBanner] = useState(0)
+  const [currentBanner, setCurrentBanner] = useState(0);
 
   // Auto-slide functionality
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentBanner((prev) => (prev + 1) % banners.length)
-    }, 5000) // Change banner every 5 seconds
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 5000); // Change banner every 5 seconds
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="py-8 md:py-12 bg-white">
@@ -49,11 +49,14 @@ export default function AdBanner() {
                 index === currentBanner
                   ? "translate-x-0"
                   : index < currentBanner
-                    ? "-translate-x-full"
-                    : "translate-x-full"
+                  ? "-translate-x-full"
+                  : "translate-x-full"
               }`}
             >
-              <a href={banner.link} className="block w-full h-full relative group">
+              <a
+                href={banner.link}
+                className="block w-full h-full relative group"
+              >
                 <Image
                   src={banner.image || "/placeholder.svg"}
                   alt={banner.title}
@@ -61,14 +64,14 @@ export default function AdBanner() {
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
 
-                {/* Banner Label */}
-                <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-2 rounded-lg">
-                  <span className="font-semibold">{banner.title}</span>
-                </div>
-
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white text-lg font-semibold bg-[#466cf4] px-6 py-3 rounded-lg">View Deals</span>
+                {/* Only Apply for loan button overlay */}
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                  <a
+                    href="/apply-loan"
+                    className="inline-block bg-green-600 text-white font-semibold px-5 py-2 rounded-lg shadow hover:bg-green-700 transition-all duration-200"
+                  >
+                    Apply for loan
+                  </a>
                 </div>
               </a>
             </div>
@@ -82,7 +85,9 @@ export default function AdBanner() {
               key={index}
               onClick={() => setCurrentBanner(index)}
               className={`w-4 h-4 rounded-full transition-all duration-200 ${
-                index === currentBanner ? "bg-[#466cf4] scale-110" : "bg-gray-300 hover:bg-gray-400"
+                index === currentBanner
+                  ? "bg-[#466cf4] scale-110"
+                  : "bg-gray-300 hover:bg-gray-400"
               }`}
             />
           ))}
@@ -90,23 +95,49 @@ export default function AdBanner() {
 
         {/* Banner Navigation Arrows */}
         <button
-          onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
+          onClick={() =>
+            setCurrentBanner(
+              (prev) => (prev - 1 + banners.length) % banners.length
+            )
+          }
           className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
 
         <button
-          onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
+          onClick={() =>
+            setCurrentBanner((prev) => (prev + 1) % banners.length)
+          }
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>
     </section>
-  )
+  );
 }

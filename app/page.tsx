@@ -5,6 +5,7 @@ import AdBanner2 from "@/components/AdBanner2";
 import ThreeColumnAd from "@/components/ThreeColumnAd";
 import ProductGrid from "@/components/ProductGrid";
 import CategorySection from "@/components/CategorySection";
+import TestimonialGrid from "@/components/TestimonialGrid";
 import AdBanner from "@/components/AdBanner";
 import Footer from "@/components/Footer";
 
@@ -32,8 +33,8 @@ export default function Home() {
       {/* Ad Banner - Three rotating promotional banners */}
       <AdBanner />
 
-      {/* Second Product Grid - Additional products showcase */}
-      <ProductGrid />
+      {/* Testimonial Grid - Customer reviews and ratings */}
+      <TestimonialGrid />
 
       {/* Footer - Comprehensive site links and contact info */}
       <Footer />
