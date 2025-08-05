@@ -60,17 +60,41 @@ export default function StoreBanner() {
       (prev) => (prev - 1 + sideBannerImages.length) % sideBannerImages.length
     );
 
+  const categories = [
+    "Phones and Tablets",
+    "Computing",
+    "Electronics",
+    "Generators & Power Solutions",
+    "Accessories",
+    "Home & Kitchen",
+    "Lifestyle",
+    "Watches",
+    "Premium Devices",
+  ];
+
   return (
     <div className="flex w-full max-w-7xl mx-auto my-8 gap-4 px-4 justify-center">
-      {/* 70% Slider Banner */}
-      <div className="w-full md:w-[70%] bg-[#050f1f] rounded-lg relative overflow-hidden flex flex-col justify-center items-center min-h-[340px]">
+      {/* Categories Column */}
+      <div className="hidden md:flex flex-col w-[20%] min-w-[160px] bg-white rounded-lg shadow p-4 gap-2">
+        <h3 className="text-xs font-bold text-[#466cf4] mb-2 uppercase tracking-wide">Categories</h3>
+        <ul className="space-y-2">
+          {categories.map((cat) => (
+            <li key={cat} className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer">
+              <span className="inline-block w-2 h-2 bg-[#466cf4] rounded-full mr-2"></span>
+              {cat}
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Main Banner Column */}
+      <div className="w-full md:w-[60%] bg-[#050f1f] rounded-lg relative overflow-hidden flex flex-col justify-center items-center min-h-[340px]">
         <div className="relative w-full h-full min-h-[340px] flex items-center justify-center">
           <Image
             src={sliderImages[current].src}
             alt={sliderImages[current].alt}
             fill
             className="object-cover w-full h-full"
-            sizes="(max-width: 768px) 100vw, 70vw"
+            sizes="(max-width: 768px) 100vw, 60vw"
           />
           <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-white px-6">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center drop-shadow-lg">
@@ -100,16 +124,24 @@ export default function StoreBanner() {
           </button>
         </div>
       </div>
-      {/* 30% Slider Banner */}
-      <div className="w-full md:w-[30%] bg-[#466cf4] rounded-lg flex flex-col justify-center items-center text-white p-0 relative overflow-hidden min-h-[340px]">
+      {/* Side Banner Column */}
+      <div className="w-full md:w-[20%] bg-[#466cf4] rounded-lg flex flex-col justify-center items-center text-white p-0 relative overflow-hidden min-h-[340px]">
         <div className="relative w-full h-full min-h-[340px] flex items-center justify-center">
           <Image
             src={sideBannerImages[sideCurrent].src}
             alt={sideBannerImages[sideCurrent].alt}
             fill
             className="object-cover w-full h-full rounded-lg"
-            sizes="(max-width: 868px) 100vw, 30vw"
+            sizes="(max-width: 868px) 100vw, 20vw"
           />
+          <div className="absolute inset-x-0 bottom-6 flex items-end justify-center">
+            <button
+              className="bg-[#2b0822] hover:bg-[#2746a3] text-white text-sm font-semibold px-5 py-2 shadow transition-all duration-200"
+              style={{ minWidth: 100 }}
+            >
+              Get loan
+            </button>
+          </div>
         </div>
       </div>
     </div>
