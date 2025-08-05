@@ -39,7 +39,7 @@ export default function StoreHeader() {
       icon: <AlignJustify className="h-4 w-4 text-[#466cf4]" />,
     },
     {
-      name: "Generators & Power Solutions",
+      name: "Generators",
       icon: <Search className="h-4 w-4 text-[#466cf4]" />,
     },
     {
@@ -62,7 +62,7 @@ export default function StoreHeader() {
   ];
 
   return (
-    <header className="w-full bg-white py-4 px-6 shadow flex items-center gap-4 relative">
+    <header className="w-full bg-white py-4 px-6 shadow flex items-center gap-4 relative sticky top-0 z-30">
       {/* Align Justify Icon */}
       <div className="relative" ref={dropdownRef}>
         <AlignJustify

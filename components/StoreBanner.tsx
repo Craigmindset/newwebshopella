@@ -1,4 +1,15 @@
 import React, { useState, useEffect } from "react";
+import {
+  Smartphone,
+  Laptop,
+  Monitor,
+  BatteryCharging,
+  Headphones,
+  Home,
+  Heart,
+  Watch,
+  Gem,
+} from "lucide-react";
 import Image from "next/image";
 
 const sliderImages = [
@@ -61,33 +72,56 @@ export default function StoreBanner() {
     );
 
   const categories = [
-    "Phones and Tablets",
-    "Computing",
-    "Electronics",
-    "Generators & Power Solutions",
-    "Accessories",
-    "Home & Kitchen",
-    "Lifestyle",
-    "Watches",
-    "Premium Devices",
+    {
+      name: "Phones and Tablets",
+      icon: <Smartphone className="h-4 w-4 text-[#466cf4]" />,
+    },
+    { name: "Computing", icon: <Laptop className="h-4 w-4 text-[#466cf4]" /> },
+    {
+      name: "Electronics",
+      icon: <Monitor className="h-4 w-4 text-[#466cf4]" />,
+    },
+    {
+      name: "Generators",
+      icon: <BatteryCharging className="h-4 w-4 text-[#466cf4]" />,
+    },
+    {
+      name: "Accessories",
+      icon: <Headphones className="h-4 w-4 text-[#466cf4]" />,
+    },
+    {
+      name: "Home & Kitchen",
+      icon: <Home className="h-4 w-4 text-[#466cf4]" />,
+    },
+    { name: "Lifestyle", icon: <Heart className="h-4 w-4 text-[#466cf4]" /> },
+    { name: "Watches", icon: <Watch className="h-4 w-4 text-[#466cf4]" /> },
+    {
+      name: "Premium Devices",
+      icon: <Gem className="h-4 w-4 text-[#466cf4]" />,
+    },
   ];
 
   return (
     <div className="flex w-full max-w-7xl mx-auto my-8 gap-4 px-4 justify-center">
       {/* Categories Column */}
-      <div className="hidden md:flex flex-col w-[20%] min-w-[160px] bg-white rounded-lg shadow p-4 gap-2">
-        <h3 className="text-xs font-bold text-[#466cf4] mb-2 uppercase tracking-wide">Categories</h3>
+      <div className="hidden md:flex flex-col w-[15%] min-w-[120px] bg-white rounded-lg shadow p-4 gap-2">
+        <h3 className="text-xs font-bold text-[#466cf4] mb-2 uppercase tracking-wide">
+          Categories
+        </h3>
         <ul className="space-y-2">
           {categories.map((cat) => (
-            <li key={cat} className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer">
-              <span className="inline-block w-2 h-2 bg-[#466cf4] rounded-full mr-2"></span>
-              {cat}
+            <li
+              key={cat.name}
+              className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer"
+            >
+              {cat.icon}
+              <span>{cat.name}</span>
             </li>
           ))}
         </ul>
       </div>
       {/* Main Banner Column */}
-      <div className="w-full md:w-[60%] bg-[#050f1f] rounded-lg relative overflow-hidden flex flex-col justify-center items-center min-h-[340px]">
+      <div className="w-full md:w-[65%] bg-[#050f1f] rounded-lg relative overflow-hidden flex flex-col justify-center items-center min-h-[340px]">
         <div className="relative w-full h-full min-h-[340px] flex items-center justify-center">
           <Image
             src={sliderImages[current].src}
