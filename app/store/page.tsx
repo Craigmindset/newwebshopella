@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/ProductGrid";
 import { useAuth } from "@/hooks/useAuth";
 import StoreHeader from "@/components/ui/StoreHeader";
+import CategorySection from "@/components/CategorySection";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import StoreDisplayBelow from "@/components/StoreDisplayBelow";
 import StoreBanner from "@/components/StoreBanner";
 import { products } from "@/lib/products";
 
@@ -35,6 +37,8 @@ export default function StorePage() {
       <Header />
       <StoreHeader />
       <StoreBanner />
+      <StoreDisplayBelow />
+      <CategorySection />
 
       {user && (
         <div className="flex justify-end items-center mb-4 max-w-7xl mx-auto px-4">
@@ -50,7 +54,7 @@ export default function StorePage() {
         </div>
       )}
 
-      <main className="bg-gray-50 min-h-screen py-12">
+      <main className="bg-[#efefef] min-h-screen py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-8">
             Shop Our Store

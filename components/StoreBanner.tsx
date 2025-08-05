@@ -76,35 +76,35 @@ export default function StoreBanner() {
   const categories = [
     {
       name: "Phones and Tablets",
-      icon: <Smartphone className="h-4 w-4 text-[#466cf4]" />,
+      icon: <Smartphone className="h-4 w-4 text-black" />,
     },
-    { name: "Computing", icon: <Laptop className="h-4 w-4 text-[#466cf4]" /> },
+    { name: "Computing", icon: <Laptop className="h-4 w-4 text-black" /> },
     {
       name: "Electronics",
-      icon: <Monitor className="h-4 w-4 text-[#466cf4]" />,
+      icon: <Monitor className="h-4 w-4 text-black" />,
     },
     {
       name: "Generators",
-      icon: <BatteryCharging className="h-4 w-4 text-[#466cf4]" />,
+      icon: <BatteryCharging className="h-4 w-4 text-black" />,
     },
     {
       name: "Accessories",
-      icon: <Headphones className="h-4 w-4 text-[#466cf4]" />,
+      icon: <Headphones className="h-4 w-4 text-black" />,
     },
     {
       name: "Home & Kitchen",
-      icon: <Home className="h-4 w-4 text-[#466cf4]" />,
+      icon: <Home className="h-4 w-4 text-black" />,
     },
-    { name: "Lifestyle", icon: <Heart className="h-4 w-4 text-[#466cf4]" /> },
-    { name: "Watches", icon: <Watch className="h-4 w-4 text-[#466cf4]" /> },
+    { name: "Lifestyle", icon: <Heart className="h-4 w-4 text-black" /> },
+    { name: "Watches", icon: <Watch className="h-4 w-4 text-black" /> },
     {
       name: "Premium Devices",
-      icon: <Gem className="h-4 w-4 text-[#466cf4]" />,
+      icon: <Gem className="h-4 w-4 text-black" />,
     },
   ];
 
   return (
-    <div className="flex w-full max-w-7xl mx-auto my-8 gap-4 px-4 justify-center">
+    <div className="flex w-full max-w-7xl mx-auto my-0 py-6 gap-4 px-4 justify-center bg-[#efefef]">
       {/* Categories Column */}
       <div className="hidden md:flex flex-col w-[15%] min-w-[120px] bg-white rounded-lg shadow p-4 gap-2">
         <h3 className="text-xs font-bold text-[#466cf4] mb-2 uppercase tracking-wide">
@@ -113,7 +113,7 @@ export default function StoreBanner() {
         <ul className="space-y-2">
           {categories.map((cat, idx) => (
             <React.Fragment key={cat.name}>
-              <li className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer">
+              <li className="flex items-center gap-2 text-xs text-black hover:text-[#466cf4] cursor-pointer">
                 {cat.icon}
                 <span>{cat.name}</span>
               </li>
