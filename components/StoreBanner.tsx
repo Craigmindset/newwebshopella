@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 import {
   Smartphone,
   Laptop,
@@ -46,6 +47,7 @@ const sideBannerImages = [
 ];
 
 export default function StoreBanner() {
+  const [showBrands, setShowBrands] = useState(false);
   const [current, setCurrent] = useState(0);
   const [sideCurrent, setSideCurrent] = useState(0);
 
@@ -109,14 +111,29 @@ export default function StoreBanner() {
           Categories
         </h3>
         <ul className="space-y-2">
-          {categories.map((cat) => (
-            <li
-              key={cat.name}
-              className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer"
-            >
-              {cat.icon}
-              <span>{cat.name}</span>
-            </li>
+          {categories.map((cat, idx) => (
+            <React.Fragment key={cat.name}>
+              <li className="flex items-center gap-2 text-xs text-gray-700 hover:text-[#466cf4] cursor-pointer">
+                {cat.icon}
+                <span>{cat.name}</span>
+              </li>
+              {cat.name === "Premium Devices" && (
+                <>
+                  <hr className="my-3 border-t border-gray-200" />
+                  <div
+                    className="flex items-center gap-2 text-xs font-bold text-[#466cf4] mb-2 mt-1 uppercase tracking-wide cursor-pointer select-none relative"
+                    onClick={() => setShowBrands((prev) => !prev)}
+                  >
+                    Shop Brands
+                    <Plus
+                      className={`h-4 w-4 transition-transform ${
+                        showBrands ? "rotate-45" : "rotate-0"
+                      }`}
+                    />
+                  </div>
+                </>
+              )}
+            </React.Fragment>
           ))}
         </ul>
       </div>
