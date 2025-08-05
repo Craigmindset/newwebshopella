@@ -16,7 +16,7 @@ export default function StoreHeader() {
         <input
           type="text"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Search for your brands"
           className="w-full border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:border-[#466cf4]"
         />

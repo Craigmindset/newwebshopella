@@ -12,7 +12,19 @@ import { ShoppingCart, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Sample product data (replace this with your dynamic import later)
-const products = [
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice?: number;
+  discount?: number;
+  image: string;
+  gallery: string[];
+  description: string;
+  specifications: string[];
+};
+
+const products: Product[] = [
   {
     id: 1,
     name: "Untitled Product",
@@ -72,7 +84,15 @@ const products = [
 ];
 
 // Cart Context
-const CartContext = createContext(null);
+type CartItem = Product & { quantity: number };
+type CartContextType = {
+  cartItems: CartItem[];
+  cartCount: number;
+  addToCart: (product: Product, quantity?: number) => void;
+  getCartTotal: () => number;
+  clearCart: () => void;
+};
+const CartContext = createContext<CartContextType | null>(null);
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) throw new Error("useCart must be used within a CartProvider");
@@ -80,25 +100,25 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
     const saved = localStorage.getItem("shopella-cart");
     if (saved) {
-      const parsed = JSON.parse(saved);
+      const parsed: CartItem[] = JSON.parse(saved);
       setCartItems(parsed);
-      setCartCount(parsed.reduce((acc, i) => acc + i.quantity, 0));
+      setCartCount(parsed.reduce((acc: number, i: CartItem) => acc + i.quantity, 0));
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem("shopella-cart", JSON.stringify(cartItems));
-    setCartCount(cartItems.reduce((acc, i) => acc + i.quantity, 0));
+    setCartCount(cartItems.reduce((acc: number, i: CartItem) => acc + i.quantity, 0));
   }, [cartItems]);
 
-  const addToCart = (product, quantity = 1) => {
-    setCartItems((prev) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
+    setCartItems((prev: CartItem[]) => {
       const existing = prev.find((i) => i.id === product.id);
       return existing
         ? prev.map((i) =>
@@ -110,7 +130,7 @@ export const CartProvider = ({ children }) => {
 
   // Calculate total price of items in cart
   const getCartTotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0);
   };
 
   // Clear all items from cart
@@ -129,7 +149,7 @@ export const CartProvider = ({ children }) => {
 
 export default function ProductGrid() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { addToCart } = useCart();
@@ -168,81 +188,80 @@ export default function ProductGrid() {
             </p>
           </div>
 
-          <div className="flex justify-between items-center mb-4">
+          <div className="relative flex items-center justify-center">
+            {/* Left navigation button overlay */}
             <button
               onClick={goToPrevSlide}
               disabled={currentSlide === 0}
-              className={`p-2 rounded bg-gray-200 text-gray-700 font-semibold mr-2 ${
+              className={`absolute left-4 z-20 p-3 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold shadow-lg top-1/2 transform -translate-y-1/2 transition ${
                 currentSlide === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-6 h-6" />
             </button>
-            {/* Removed slide indicator */}
+            {/* Product grid */}
+            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {getVisibleProducts().map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white p-4 rounded-lg shadow relative"
+                >
+                  {product.discount && (
+                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      {product.discount}% OFF
+                    </div>
+                  )}
+                  <div className="relative group">
+                    <Image
+                      src={product.image || "/placeholder.svg"}
+                      alt={product.name}
+                      width={300}
+                      height={200}
+                      className="rounded-md w-full h-40 object-contain"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity">
+                      <button
+                        onClick={() => addToCart(product)}
+                        className="p-2 bg-[#466cf4] text-white rounded-full"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => openModal(product)}
+                        className="p-2 bg-white text-gray-800 rounded-full"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold text-gray-900 truncate">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[#466cf4] font-bold text-lg">
+                        ₦{product.price.toLocaleString()}
+                      </p>
+                      {product.oldPrice && (
+                        <p className="text-gray-400 line-through text-sm">
+                          ₦{product.oldPrice.toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Right navigation button overlay */}
             <button
               onClick={goToNextSlide}
               disabled={currentSlide === totalSlides - 1}
-              className={`p-2 rounded bg-gray-200 text-gray-700 font-semibold ml-2 ${
-                currentSlide === totalSlides - 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+              className={`absolute right-4 z-20 p-3 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold shadow-lg top-1/2 transform -translate-y-1/2 transition ${
+                currentSlide === totalSlides - 1 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-6 h-6" />
             </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {getVisibleProducts().map((product) => (
-              <div
-                key={product.id}
-                className="bg-white p-4 rounded-lg shadow relative"
-              >
-                {product.discount && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    {product.discount}% OFF
-                  </div>
-                )}
-                <div className="relative group">
-                  <Image
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.name}
-                    width={300}
-                    height={200}
-                    className="rounded-md w-full h-40 object-contain"
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity">
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="p-2 bg-[#466cf4] text-white rounded-full"
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => openModal(product)}
-                      className="p-2 bg-white text-gray-800 rounded-full"
-                    >
-                      <Eye className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold text-gray-900 truncate">
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <p className="text-[#466cf4] font-bold text-lg">
-                      ₦{product.price.toLocaleString()}
-                    </p>
-                    {product.oldPrice && (
-                      <p className="text-gray-400 line-through text-sm">
-                        ₦{product.oldPrice.toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
 
           <div className="text-center mt-8">
