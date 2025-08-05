@@ -6,7 +6,7 @@ import { useState } from "react";
 const testimonials = [
   {
     name: "Chinedu Okafor",
-    role: "Verified Buyer",
+    role: "Customer",
     avatar: "/Testimonial Images/customer6.jpg",
     text: "Absolutely love the quality and speed of delivery. Highly recommended!",
   },
@@ -59,7 +59,7 @@ export default function TestimonialGrid() {
           {visibleTestimonials.map((t, idx) => (
             <div
               key={startIdx + idx}
-              className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200"
+              className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-95"
             >
               <div className="w-14 h-14 mb-3 rounded-full overflow-hidden flex items-center justify-center">
                 <Image

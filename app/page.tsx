@@ -6,6 +6,8 @@ import ThreeColumnAd from "@/components/ThreeColumnAd";
 import ProductGrid from "@/components/ProductGrid";
 import CategorySection from "@/components/CategorySection";
 import TestimonialGrid from "@/components/TestimonialGrid";
+import NewsletterFooterDivider from "@/components/NewsletterFooterDivider";
+import NewsLetter from "@/components/NewsLetter";
 import AdBanner from "@/components/AdBanner";
 import Footer from "@/components/Footer";
 
@@ -34,7 +36,13 @@ export default function Home() {
       <AdBanner />
 
       {/* Testimonial Grid - Customer reviews and ratings */}
+
       <TestimonialGrid />
+
+      {/* Newsletter Signup - Email subscription form */}
+      <NewsLetter />
+
+      <NewsletterFooterDivider />
 
       {/* Footer - Comprehensive site links and contact info */}
       <Footer />
