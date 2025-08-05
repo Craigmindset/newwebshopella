@@ -6,8 +6,10 @@ import { ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/ProductGrid";
 import { useAuth } from "@/hooks/useAuth";
+import StoreHeader from "@/components/ui/StoreHeader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import StoreBanner from "@/components/StoreBanner";
 import { products } from "@/lib/products";
 
 const categories = ["Phones", "Laptops", "Accessories", "TVs", "Appliances"];
@@ -31,6 +33,8 @@ export default function StorePage() {
   return (
     <>
       <Header />
+      <StoreHeader />
+      <StoreBanner />
 
       {user && (
         <div className="flex justify-end items-center mb-4 max-w-7xl mx-auto px-4">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import WhyChooseUs from "@/components/WhyChooseUs";
+import TestimonialGrid from "@/components/TestimonialGrid";
 import { Poppins } from "next/font/google";
 import { ChevronDown } from "lucide-react";
 
@@ -79,11 +80,11 @@ export default function Access() {
       <section className="bg-white min-h-screen py-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/background-img.jpg"
-            alt="Shopella Hero Background"
+            src="/background-img .jpg"
+            alt="Shopella"
             layout="fill"
             objectFit="cover"
-            className="opacity-15"
+            className="opacity-10"
             priority
           />
         </div>
@@ -211,6 +212,7 @@ export default function Access() {
         </div>
       </section>
       <WhyChooseUs />
+      <TestimonialGrid />
       <Footer />
     </>
   );
