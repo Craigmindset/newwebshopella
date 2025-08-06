@@ -108,13 +108,17 @@ export const CartProvider = ({ children }) => {
     if (saved) {
       const parsed: CartItem[] = JSON.parse(saved);
       setCartItems(parsed);
-      setCartCount(parsed.reduce((acc: number, i: CartItem) => acc + i.quantity, 0));
+      setCartCount(
+        parsed.reduce((acc: number, i: CartItem) => acc + i.quantity, 0)
+      );
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem("shopella-cart", JSON.stringify(cartItems));
-    setCartCount(cartItems.reduce((acc: number, i: CartItem) => acc + i.quantity, 0));
+    setCartCount(
+      cartItems.reduce((acc: number, i: CartItem) => acc + i.quantity, 0)
+    );
   }, [cartItems]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
@@ -130,7 +134,10 @@ export const CartProvider = ({ children }) => {
 
   // Calculate total price of items in cart
   const getCartTotal = () => {
-    return cartItems.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (acc: number, item: CartItem) => acc + item.price * item.quantity,
+      0
+    );
   };
 
   // Clear all items from cart
@@ -179,13 +186,30 @@ export default function ProductGrid() {
     <CartProvider>
       <section className="py-12 bg-[#f9f9f9]">
         <div className="container px-4">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Shopella <span className="text-red-500">Deals</span>
-            </h2>
-            <p className="text-sm text-gray-500">
-              Check out the best selling gadgets
-            </p>
+          <div className="flex flex-col gap-2 mb-6">
+            <div className="flex flex-col items-center text-center w-full">
+              <h2 className="text-3xl font-bold text-gray-900">
+                Shopella <span className="text-red-500">Deals</span>
+              </h2>
+              <p className="text-sm text-gray-500">
+                Check out the best selling gadgets
+              </p>
+            </div>
+            <div className="mt-2 flex justify-end w-full">
+              <Button
+                className="bg-transparent hover:bg-transparent text-[#466cf4] text-sm font-medium underline px-0 py-0 h-auto min-w-0 shadow-none border-none focus:ring-0 focus:outline-none mr-4"
+                style={{
+                  boxShadow: "none",
+                  border: "none",
+                  minWidth: 0,
+                  padding: 0,
+                  fontSize: "0.82rem",
+                  lineHeight: "1.1",
+                }}
+              >
+                View More
+              </Button>
+            </div>
           </div>
 
           <div className="relative flex items-center justify-center">
@@ -257,17 +281,13 @@ export default function ProductGrid() {
               onClick={goToNextSlide}
               disabled={currentSlide === totalSlides - 1}
               className={`absolute right-4 z-20 p-3 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold shadow-lg top-1/2 transform -translate-y-1/2 transition ${
-                currentSlide === totalSlides - 1 ? "opacity-50 cursor-not-allowed" : ""
+                currentSlide === totalSlides - 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
               }`}
             >
               <ChevronRight className="w-6 h-6" />
             </button>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button className="bg-[#466cf4] hover:bg-[#3a5ce0] text-white px-6 py-2 rounded-full">
-              View More
-            </Button>
           </div>
 
           {selectedProduct && (
