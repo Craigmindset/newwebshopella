@@ -91,7 +91,7 @@ export default function Footer() {
                   href="/help"
                   className="text-gray-300 hover:text-[#466cf4] transition-colors"
                 >
-                  Support
+                  Feedback
                 </Link>
               </li>
               <li>

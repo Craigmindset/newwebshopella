@@ -189,7 +189,7 @@ export default function ProductGrid() {
           <div className="flex flex-col gap-2 mb-6">
             <div className="flex flex-col items-center text-center w-full">
               <h2 className="text-3xl font-bold text-gray-900">
-                Shopella <span className="text-red-500">Deals</span>
+                KredMart <span className="text-red-500">Deals</span>
               </h2>
               <p className="text-sm text-gray-500">
                 Check out the best selling gadgets
