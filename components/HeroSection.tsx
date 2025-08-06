@@ -95,17 +95,17 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 className="bg-green-900 hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
-                onClick={() => (window.location.href = slide.button1.href)}
+                onClick={() => (window.location.href = slides[0].button1.href)}
               >
-                {slide.button1.text}
+                {slides[0].button1.text}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 bg-transparent"
-                onClick={() => (window.location.href = slide.button2.href)}
+                onClick={() => (window.location.href = slides[0].button2.href)}
               >
-                {slide.button2.text}
+                {slides[0].button2.text}
               </Button>
             </div>
             {/* Slider Controls */}
