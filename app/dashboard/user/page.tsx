@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import MiniCart from "@/components/MiniCart";
 import UserHeader from "@/components/UserHeader";
+import Welcome from "@/components/Welcome";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 
@@ -93,10 +95,26 @@ const recentOrders = [
 
 export default function UserDashboard() {
   // Contact Support Modal State
+  const { user, logout } = useAuth();
+  // Welcome state (client only)
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [isFirstTime, setIsFirstTime] = useState(true);
+  const username = user?.name || userData.name || "User";
+  // Determine if first time or repeat user
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
+      if (!hasSeenWelcome) {
+        setIsFirstTime(true);
+        localStorage.setItem("hasSeenWelcome", "true");
+      } else {
+        setIsFirstTime(false);
+      }
+    }
+  }, []);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportForm, setSupportForm] = useState({ subject: "", message: "" });
   const [supportStatus, setSupportStatus] = useState("");
-  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
@@ -1066,6 +1084,23 @@ export default function UserDashboard() {
 
   if (!user)
     return <div className="p-8">Please log in to access your dashboard.</div>;
+
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f9ff] px-4 py-12">
+        <Welcome
+          username={username}
+          isFirstTime={isFirstTime}
+          onContinue={(action) => {
+            if (action === "dashboard") setShowWelcome(false);
+            else if (action === "loan") window.location.href = "/getloans";
+            else if (action === "store") window.location.href = "/store";
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <UserHeader user={user} onLogout={logout} />
