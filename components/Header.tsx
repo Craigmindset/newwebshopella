@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShoppingCart, Menu } from "lucide-react";
+import { ShoppingCart, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useCart } from "./ProductGrid"; // Import cart context
@@ -44,7 +44,7 @@ export default function Header() {
     { name: "Store", href: "/store" },
     { name: "Shopella Deals", href: "/deals" },
     { name: "About", href: "/about" },
-    ...(user ? [{ name: "Dashboard", href: "/dashboard/user" }] : []),
+    // Dashboard link removed, replaced by profile icon
   ];
 
   return (
@@ -80,7 +80,8 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Right Section - Cart and Auth */}
+
+          {/* Right Section - Cart and Profile Icon */}
           <div className="flex items-center space-x-4">
             {/* Cart Icon - Updated to show actual cart count */}
             <Link
@@ -92,6 +93,17 @@ export default function Header() {
                 {cartCount}
               </span>
             </Link>
+            {/* Profile Icon - Only show when user is logged in */}
+            {user && (
+              <button
+                type="button"
+                onClick={() => router.push("/dashboard/user")}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                aria-label="Go to dashboard"
+              >
+                <User className="h-6 w-6 text-white" />
+              </button>
+            )}
 
             {/* Auth Buttons - Desktop */}
             <div className="hidden md:flex space-x-2">
