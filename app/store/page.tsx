@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export default function StorePage() {
   const { user, loading, logout } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const router = useRouter();
 
   const filteredProducts = products.filter((product) => {
     const matchCategory = selectedCategory
@@ -61,19 +63,33 @@ export default function StorePage() {
           </h1>
 
           <div className="flex flex-wrap gap-2 justify-center mb-6">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() =>
-                  setSelectedCategory(
-                    selectedCategory === category ? null : category
-                  )
-                }
-              >
-                {category}
-              </Button>
-            ))}
+            {categories.map((category) =>
+              category === "Phones" ? (
+                <Button
+                  key={category}
+                  variant={
+                    selectedCategory === category ? "default" : "outline"
+                  }
+                  onClick={() => router.push("/store/phones-tablets")}
+                >
+                  {category}
+                </Button>
+              ) : (
+                <Button
+                  key={category}
+                  variant={
+                    selectedCategory === category ? "default" : "outline"
+                  }
+                  onClick={() =>
+                    setSelectedCategory(
+                      selectedCategory === category ? null : category
+                    )
+                  }
+                >
+                  {category}
+                </Button>
+              )
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2 justify-center mb-10">

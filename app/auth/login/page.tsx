@@ -7,9 +7,13 @@ import { Eye, EyeOff, Mail, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+// import Welcome from "@/components/Welcome";
 import Image from "next/image";
 
+
 export default function LoginPage() {
+  // const [showWelcome, setShowWelcome] = useState(false);
+  // const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +38,12 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // const handleWelcomeContinue = (action: "dashboard" | "loan" | "store") => {
+  //   if (action === "dashboard") router.push("/dashboard/user");
+  //   else if (action === "loan") router.push("/getloans");
+  //   else if (action === "store") router.push("/store");
+  // };
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-[#f5f9ff] px-4 lg:px-16 py-12 relative">
       <Image
@@ -43,7 +53,6 @@ export default function LoginPage() {
         className="absolute inset-0 object-cover opacity-30 z-[-10]"
         priority
       />
-
       {/* Left Section */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center relative">
         <div className="max-w-md relative">
@@ -57,13 +66,11 @@ export default function LoginPage() {
           <div className="bg-white shadow rounded-lg px-6 py-4 mt-0 text-center">
             <p className="text-gray-800 text-sm font-medium leading-relaxed">
               your credit-powered e-commerce platform. <br />
-              access instant wallet loans and shop top products with the best
-              deal.
+              access instant wallet loans and shop top products with the best deal.
             </p>
           </div>
         </div>
       </div>
-
       {/* Right Section */}
       <div className="w-full lg:w-1/2 max-w-md bg-white rounded-xl shadow-md p-6 md:p-10 mt-10 lg:mt-0 relative">
         {/* Close icon - match signup page position */}
@@ -84,7 +91,6 @@ export default function LoginPage() {
           </h1>
           <p className="text-sm text-gray-500">Sign in to your account</p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -99,7 +105,6 @@ export default function LoginPage() {
               placeholder="Enter your email"
             />
           </div>
-
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Input
@@ -124,7 +129,6 @@ export default function LoginPage() {
               )}
             </button>
           </div>
-
           <div className="flex justify-between text-sm text-gray-600">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="accent-[#466cf4]" />
@@ -137,7 +141,6 @@ export default function LoginPage() {
               Forgot password?
             </Link>
           </div>
-
           <Button
             type="submit"
             disabled={isLoading}
@@ -145,11 +148,9 @@ export default function LoginPage() {
           >
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
-
           <div className="text-center text-gray-500 text-sm">
             Or continue with
           </div>
-
           <Button
             type="button"
             variant="outline"
@@ -164,7 +165,6 @@ export default function LoginPage() {
             Google
           </Button>
         </form>
-
         <p className="text-center mt-6 text-gray-600">
           Don’t have an account?{" "}
           <Link
@@ -174,7 +174,6 @@ export default function LoginPage() {
             Sign up
           </Link>
         </p>
-
         <div className="mt-4 text-center text-sm">
           <Link href="/" className="text-gray-500 hover:text-gray-700">
             Continue as Guest
@@ -182,5 +181,7 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+
   );
 }
+

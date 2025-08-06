@@ -24,8 +24,13 @@ export default function Header() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const path = window.location.pathname;
-      const found = menuItems.find((item) => item.href === path);
-      if (found) setActiveMenu(found.name);
+      // If on /store or any nested /store/* page, set Store as active
+      if (path === "/store" || path.startsWith("/store/")) {
+        setActiveMenu("Store");
+      } else {
+        const found = menuItems.find((item) => item.href === path);
+        if (found) setActiveMenu(found.name);
+      }
     }
   }, []);
 

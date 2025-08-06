@@ -47,6 +47,11 @@ const sideBannerImages = [
 ];
 
 export default function StoreBanner() {
+  const handleCategoryClick = (catName: string) => {
+    if (catName === "Phones and Tablets") {
+      window.location.href = "/store/phones-tablets";
+    }
+  };
   const [showBrands, setShowBrands] = useState(false);
   const [current, setCurrent] = useState(0);
   const [sideCurrent, setSideCurrent] = useState(0);
@@ -113,9 +118,12 @@ export default function StoreBanner() {
         <ul className="space-y-2">
           {categories.map((cat, idx) => (
             <React.Fragment key={cat.name}>
-              <li className="flex items-center gap-2 text-xs text-black hover:text-[#466cf4] cursor-pointer">
-                {cat.icon}
-                <span>{cat.name}</span>
+              <li
+                className="flex items-center gap-3 text-xs text-black hover:text-[#466cf4] cursor-pointer ml-2"
+                onClick={() => handleCategoryClick(cat.name)}
+              >
+                {React.cloneElement(cat.icon, { width: 36, height: 36 })}
+                <span className="font-medium">{cat.name}</span>
               </li>
               {cat.name === "Premium Devices" && (
                 <>

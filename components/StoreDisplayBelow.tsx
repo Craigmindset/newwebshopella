@@ -4,24 +4,24 @@ export default function StoreDisplayBelow() {
   // Example images, replace with your own
   const displays = [
     {
-      src: "/placeholder.jpg",
-      alt: "Display 1",
+      src: "/ad-section-img.jpg",
+      alt: "Ad Section",
     },
     {
-      src: "/placeholder.jpg",
-      alt: "Display 2",
+      src: "/credit-direct banner.png",
+      alt: "Credit Direct Banner",
     },
     {
-      src: "/placeholder.jpg",
-      alt: "Display 3",
+      src: "/ad2 banner.png",
+      alt: "Ad2 Banner",
     },
   ];
 
   return (
     <div className="flex justify-center items-center mx-auto  max-w-7xl px-4 bg-[#efefef] py-1">
       <div
-        className="grid grid-cols-3 gap-6 w-full"
-        style={{ gridTemplateColumns: "25% 35% 35%" }}
+        className="grid grid-cols-3 gap-2 w-full"
+        style={{ gridTemplateColumns: "25% 35% 40%" }}
       >
         {displays.map((display, idx) => (
           <div
