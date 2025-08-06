@@ -49,6 +49,12 @@ export default function TestimonialGrid() {
   const startIdx = slide * perPage;
   const visibleTestimonials = testimonials.slice(startIdx, startIdx + perPage);
 
+  const bgColors = [
+    "bg-green-50",
+    "bg-purple-50",
+    "bg-yellow-50"
+  ];
+
   return (
     <section className="w-full max-w-5xl mx-auto py-8 px-4">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
@@ -59,7 +65,7 @@ export default function TestimonialGrid() {
           {visibleTestimonials.map((t, idx) => (
             <div
               key={startIdx + idx}
-              className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-95"
+              className={`${bgColors[(startIdx + idx) % bgColors.length]} rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-95`}
             >
               <div className="w-14 h-14 mb-3 rounded-full overflow-hidden flex items-center justify-center">
                 <Image
