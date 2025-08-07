@@ -89,12 +89,11 @@ export default function BrandFilter({
           <option value="" className="text-xs">
             All Categories
           </option>
-          {allCategories
-            .map((cat) => (
-              <option key={cat} value={cat} className="text-xs">
-                {cat}
-              </option>
-            ))}
+          {allCategories.map((cat) => (
+            <option key={cat} value={cat} className="text-xs">
+              {cat}
+            </option>
+          ))}
         </select>
       </div>
       {/* Brand Filter */}
