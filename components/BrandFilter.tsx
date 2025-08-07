@@ -60,46 +60,6 @@ export default function BrandFilter({
 
   return (
     <>
-      {/* Brand Filter */}
-      <div className="mb-6">
-        <label className="block text-xs font-semibold mb-2">Brand</label>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {brands.map((brand) => (
-            <Button
-              key={brand}
-              variant={selectedBrand === brand ? "default" : "outline"}
-              onClick={() => {
-                setSelectedBrand(selectedBrand === brand ? null : brand);
-                router.push("/store/phones-tablets");
-              }}
-              className="text-xs px-3 py-1"
-            >
-              {brand}
-            </Button>
-          ))}
-        </div>
-        {/* Brand Dropdown */}
-        <select
-          className="border rounded px-3 py-2 bg-white shadow w-full text-xs"
-          value={selectedBrand || ""}
-          onChange={(e) => {
-            const value = e.target.value || null;
-            setSelectedBrand(value);
-            if (value) {
-              router.push("/store/phones-tablets");
-            }
-          }}
-        >
-          <option value="" className="text-xs">
-            All Brands
-          </option>
-          {allBrandOptions.map((brand) => (
-            <option key={brand} value={brand} className="text-xs">
-              {brand}
-            </option>
-          ))}
-        </select>
-      </div>
       {/* Category Dropdown Filter */}
       <div className="mb-6">
         <label className="block text-xs font-semibold mb-2">Category</label>
@@ -130,12 +90,47 @@ export default function BrandFilter({
             All Categories
           </option>
           {allCategories
-            .filter((cat) => cat !== activeCategory)
             .map((cat) => (
               <option key={cat} value={cat} className="text-xs">
                 {cat}
               </option>
             ))}
+        </select>
+      </div>
+      {/* Brand Filter */}
+      <div className="mb-6">
+        <label className="block text-xs font-semibold mb-2">Brand</label>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {brands.map((brand) => (
+            <Button
+              key={brand}
+              variant={selectedBrand === brand ? "default" : "outline"}
+              onClick={() => {
+                setSelectedBrand(selectedBrand === brand ? null : brand);
+              }}
+              className="text-xs px-3 py-1"
+            >
+              {brand}
+            </Button>
+          ))}
+        </div>
+        {/* Brand Dropdown */}
+        <select
+          className="border rounded px-3 py-2 bg-white shadow w-full text-xs"
+          value={selectedBrand || ""}
+          onChange={(e) => {
+            const value = e.target.value || null;
+            setSelectedBrand(value);
+          }}
+        >
+          <option value="" className="text-xs">
+            All Brands
+          </option>
+          {allBrandOptions.map((brand) => (
+            <option key={brand} value={brand} className="text-xs">
+              {brand}
+            </option>
+          ))}
         </select>
       </div>
       {/* Price Sort */}

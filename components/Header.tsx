@@ -42,7 +42,7 @@ export default function Header() {
     { name: "Home", href: "/" },
     { name: "Access Loans", href: "/access" },
     { name: "Store", href: "/store" },
-    { name: "Shopella Deals", href: "/deals" },
+    { name: "Kredmart Deals", href: "/deals" },
     { name: "About", href: "/about" },
     // Dashboard link removed, replaced by profile icon
   ];
@@ -79,7 +79,6 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-
 
           {/* Right Section - Cart and Profile Icon */}
           <div className="flex items-center space-x-4">

@@ -1,4 +1,6 @@
 "use client";
+import React from "react";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -22,6 +24,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone1.jpg",
+    deal: true,
   },
   {
     id: 109,
@@ -30,6 +33,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone2.jpg",
+    deal: true,
   },
   {
     id: 110,
@@ -38,6 +42,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone3.jpg",
+    deal: false,
   },
   {
     id: 111,
@@ -46,6 +51,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone4.jpg",
+    deal: false,
   },
   {
     id: 112,
@@ -54,6 +60,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone5.jpg",
+    deal: true,
   },
   {
     id: 113,
@@ -62,6 +69,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Phones",
     image: "/Apple/iphone6.jpg",
+    deal: false,
   },
   {
     id: 102,
@@ -70,6 +78,7 @@ const demoProducts = [
     brand: "Samsung",
     category: "Phones",
     image: "/demo-samsung/1 (3).jpg",
+    deal: true,
   },
   {
     id: 103,
@@ -78,6 +87,7 @@ const demoProducts = [
     brand: "Tecno",
     category: "Phones",
     image: "/products/tecnocamon20.jpg",
+    deal: false,
   },
   {
     id: 104,
@@ -86,6 +96,7 @@ const demoProducts = [
     brand: "Apple",
     category: "Tablets",
     image: "/Apple/iphone2.jpg",
+    deal: true,
   },
   {
     id: 105,
@@ -94,6 +105,7 @@ const demoProducts = [
     brand: "Samsung",
     category: "Tablets",
     image: "/demo-samsung/1 (2).jpg",
+    deal: false,
   },
   {
     id: 107,
@@ -102,6 +114,7 @@ const demoProducts = [
     brand: "Samsung",
     category: "Phones",
     image: "/demo-samsung/1 (1).jpg",
+    deal: true,
   },
   {
     id: 108,
@@ -110,6 +123,7 @@ const demoProducts = [
     brand: "Samsung",
     category: "Phones",
     image: "/demo-samsung/1.jpg",
+    deal: false,
   },
   {
     id: 106,
@@ -118,6 +132,7 @@ const demoProducts = [
     brand: "Lenovo",
     category: "Tablets",
     image: "/products/lenovotabm10.jpg",
+    deal: true,
   },
 ];
 
@@ -137,7 +152,12 @@ export default function PhonesTabletsPage() {
   const activeCategory = "Phones and Tablets";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { user, loading, logout } = useAuth();
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("selectedBrand") || null;
+    }
+    return null;
+  });
   const [sortOrder, setSortOrder] = useState<"low" | "high" | "newest" | null>(
     null
   );
@@ -145,7 +165,23 @@ export default function PhonesTabletsPage() {
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [showDeals, setShowDeals] = useState(false);
 
-  let filteredProducts = [...products, ...demoProducts].filter((product) => {
+  // Update localStorage whenever selectedBrand changes
+  React.useEffect(() => {
+    if (selectedBrand !== null && typeof window !== "undefined") {
+      localStorage.setItem("selectedBrand", selectedBrand);
+    }
+    if (selectedBrand === null && typeof window !== "undefined") {
+      localStorage.removeItem("selectedBrand");
+    }
+  }, [selectedBrand]);
+
+  // Ensure all products have a deal property
+  const allProducts = [
+    ...products.map((p) => ({ ...p, deal: p.deal ?? false })),
+    ...demoProducts,
+  ];
+
+  let filteredProducts = allProducts.filter((product) => {
     // Only show Phones & Tablets by default, or filter by selected category
     const isActiveCategory = selectedCategory
       ? product.category === selectedCategory
@@ -170,7 +206,12 @@ export default function PhonesTabletsPage() {
   const brands = Array.from(
     new Set(
       products
-        .filter((p) => p.category === "Phones" || p.category === "Tablets")
+        .filter(
+          (p) =>
+            (p.category === "Phones" || p.category === "Tablets") &&
+            p.brand !== "Apple" &&
+            p.brand !== "Samsung"
+        )
         .map((p) => p.brand)
     )
   );
@@ -228,6 +269,14 @@ export default function PhonesTabletsPage() {
                 setActiveGalleryIdx(0);
               }}
               addToCart={addToCart}
+              resetFilters={() => {
+                setSelectedBrand(null);
+                setMinPrice("");
+                setMaxPrice("");
+                setShowDeals(false);
+                setSortOrder(null);
+                setSelectedCategory(null);
+              }}
             />
           </div>
         </div>
@@ -272,11 +321,13 @@ function ProductSection({
   products,
   setPreviewProduct,
   addToCart,
+  resetFilters,
 }: {
   title: string;
   products: any[];
   setPreviewProduct: (product: any) => void;
   addToCart: (product: any, quantity?: number) => void;
+  resetFilters: () => void;
 }) {
   return (
     <section className="mb-12">
@@ -293,7 +344,7 @@ function ProductSection({
           <Button
             variant="outline"
             className="px-6 py-2 text-xs"
-            onClick={() => window.location.reload()}
+            onClick={resetFilters}
           >
             Reset Filters
           </Button>

@@ -169,9 +169,9 @@ export default function CartPage() {
               </Button>
 
               <div className="mt-4 text-center">
-                <Link href="/" className="text-[#466cf4] hover:text-[#3a5ce0] text-sm">
-                  Continue Shopping
-                </Link>
+            <Link href="/store" className="text-[#466cf4] hover:text-[#3a5ce0] text-sm">
+              Continue Shopping
+            </Link>
               </div>
 
               {/* Security Badge */}

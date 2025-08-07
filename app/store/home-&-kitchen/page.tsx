@@ -121,30 +121,55 @@ function ProductSection({
 }) {
   const { addToCart } = useCart();
 
+  // Add empty state message and reset button
+  // Accept filter setters as props for reset button
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
+      {products.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="text-3xl mb-4">😕</div>
+          <h3 className="text-lg font-semibold mb-2">
+            No products found for this brand or filter.
+          </h3>
+          <p className="text-sm text-gray-500 mb-6 text-center">
+            Try resetting your filters or choose another brand/category.
+          </p>
+          <Button
+            variant="outline"
+            className="px-6 py-2 text-xs"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.location.reload();
+              }
+            }}
           >
-            <div className="relative overflow-hidden rounded-t-xl">
-              {/* ...image and actions... */}
+            Reset Filters
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
+            >
+              <div className="relative overflow-hidden rounded-t-xl">
+                {/* ...image and actions... */}
+              </div>
+              <div className="p-4">
+                <h3 className="font-medium truncate text-sm">{product.name}</h3>
+                <p className="text-blue-600 font-bold text-base">
+                  ₦{product.price}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {product.brand} · {product.category}
+                </p>
+              </div>
             </div>
-            <div className="p-4">
-              <h3 className="font-medium truncate text-sm">{product.name}</h3>
-              <p className="text-blue-600 font-bold text-base">
-                ₦{product.price}
-              </p>
-              <p className="text-sm text-gray-500">
-                {product.brand} · {product.category}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

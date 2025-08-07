@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import { ShoppingCart, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 // Sample product data (replace this with your dynamic import later)
 type Product = {
@@ -24,7 +25,7 @@ type Product = {
   specifications: string[];
 };
 
-const products: Product[] = [
+export const products: Product[] = [
   {
     id: 1,
     name: "Untitled Product",
@@ -35,6 +36,7 @@ const products: Product[] = [
     gallery: ["/brands/products/untitled-1_10_1.png"],
     description: "Product description.",
     specifications: ["Spec 1", "Spec 2", "Spec 3"],
+    deal: true,
   },
   {
     id: 2,
@@ -46,6 +48,7 @@ const products: Product[] = [
     gallery: ["/brands/products/hp_pavilion_15-eh0083nia-removebg-preview.png"],
     description: "HP Pavilion 15 laptop.",
     specifications: ["AMD Ryzen", "15-inch", "512GB SSD"],
+    deal: true,
   },
   {
     id: 3,
@@ -57,6 +60,7 @@ const products: Product[] = [
     gallery: ["/brands/products/hp_omen_14_1_tb.png"],
     description: "HP Omen 14 gaming laptop.",
     specifications: ["Intel i7", "14-inch", "1TB SSD"],
+    deal: true,
   },
   {
     id: 4,
@@ -68,6 +72,7 @@ const products: Product[] = [
     gallery: ["/brands/products/hpppp.png"],
     description: "HP PPPP model.",
     specifications: ["Spec A", "Spec B"],
+    deal: true,
   },
   {
     id: 5,
@@ -79,6 +84,7 @@ const products: Product[] = [
     gallery: ["/brands/products/samsung_galaxy_fold_6_1tb.png"],
     description: "Samsung Galaxy Fold 6 smartphone.",
     specifications: ["Foldable", "1TB Storage"],
+    deal: true,
   },
   // Add more products as needed...
 ];
@@ -158,12 +164,22 @@ export const CartProvider = ({ children }) => {
 
   // Remove item from cart
   const removeFromCart = (productId: number) => {
-    setCartItems((prev: CartItem[]) => prev.filter((item) => item.id !== productId));
+    setCartItems((prev: CartItem[]) =>
+      prev.filter((item) => item.id !== productId)
+    );
   };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, cartCount, addToCart, updateQuantity, removeFromCart, getCartTotal, clearCart }}
+      value={{
+        cartItems,
+        cartCount,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        getCartTotal,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>
@@ -198,6 +214,9 @@ export default function ProductGrid() {
     setQuantity(1);
   };
 
+  // Add router for navigation
+  const router = useRouter();
+
   return (
     <CartProvider>
       <section className="py-12 bg-[#f9f9f9]">
@@ -221,6 +240,9 @@ export default function ProductGrid() {
                   padding: 0,
                   fontSize: "0.82rem",
                   lineHeight: "1.1",
+                }}
+                onClick={() => {
+                  router.push("/deals");
                 }}
               >
                 View More

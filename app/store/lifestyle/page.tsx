@@ -10,6 +10,7 @@ import StoreDisplayBelow from "@/components/StoreDisplayBelow";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ShoppingCart, Eye } from "lucide-react";
+import ProductPreviewModal from "@/components/ProductPreviewModal";
 
 const demoProducts = [
   {
@@ -136,6 +137,9 @@ export default function LifestylePage() {
     )
   );
 
+  const [previewProduct, setPreviewProduct] = useState<any | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
   return (
     <>
       <Header />
@@ -172,9 +176,36 @@ export default function LifestylePage() {
           </aside>
           {/* Main Content */}
           <div className="flex-1">
-            <ProductSection title="All Lifestyle" products={filteredProducts} />
+            <ProductSection
+              title="All Lifestyle"
+              products={filteredProducts}
+              setPreviewProduct={setPreviewProduct}
+              setQuantity={setQuantity}
+              setActiveGalleryIdx={setActiveGalleryIdx}
+            />
           </div>
         </div>
+        {/* Preview Modal */}
+        {previewProduct && (
+          <ProductPreviewModal
+            product={previewProduct}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            activeGalleryIdx={activeGalleryIdx}
+            setActiveGalleryIdx={setActiveGalleryIdx}
+            onAddToCart={() => {
+              const productWithDefaults = {
+                ...previewProduct,
+                gallery: previewProduct.gallery || [previewProduct.image],
+                description: previewProduct.description || "",
+              };
+              const { addToCart } = useCart();
+              addToCart(productWithDefaults, quantity);
+              setPreviewProduct(null);
+            }}
+            onClose={() => setPreviewProduct(null)}
+          />
+        )}
       </main>
       <Footer />
     </>
@@ -184,52 +215,98 @@ export default function LifestylePage() {
 function ProductSection({
   title,
   products,
+  setPreviewProduct,
+  setQuantity,
+  setActiveGalleryIdx,
 }: {
   title: string;
   products: any[];
+  setPreviewProduct: (product: any) => void;
+  setQuantity: (q: number) => void;
+  setActiveGalleryIdx: (idx: number) => void;
 }) {
   const { addToCart } = useCart();
-
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
+      {products.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="text-3xl mb-4">😕</div>
+          <h3 className="text-lg font-semibold mb-2">
+            No products found for this brand or filter.
+          </h3>
+          <p className="text-sm text-gray-500 mb-6 text-center">
+            Try resetting your filters or choose another brand/category.
+          </p>
+          <Button
+            variant="outline"
+            className="px-6 py-2 text-xs"
+            onClick={() => {
+              setSelectedBrand && setSelectedBrand(null);
+              setMinPrice && setMinPrice("");
+              setMaxPrice && setMaxPrice("");
+              setShowDeals && setShowDeals(false);
+              setSortOrder && setSortOrder(null);
+              setSelectedCategory && setSelectedCategory(null);
+            }}
           >
-            <div className="relative overflow-hidden rounded-t-xl">
-              <img
-                src={product.image && product.image !== "" ? product.image : "/placeholder.jpg"}
-                alt={product.name}
-                className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300"
-                onError={e => (e.currentTarget.src = "/placeholder.jpg")}
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
-                <button className="bg-white p-2 rounded-full shadow hover:bg-blue-100">
-                  <Eye className="h-5 w-5 text-blue-700" />
-                </button>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-800"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                </button>
+            Reset Filters
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((product) => {
+            const productWithDefaults = {
+              ...product,
+              gallery: [product.image],
+              description: product.description || "",
+            };
+            return (
+              <div
+                key={product.id}
+                className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
+              >
+                <div className="relative overflow-hidden rounded-t-xl">
+                  <img
+                    src={product.image && product.image !== "" ? product.image : "/placeholder.jpg"}
+                    alt={product.name}
+                    className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300"
+                    onError={e => (e.currentTarget.src = "/placeholder.jpg")}
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
+                    <button
+                      className="bg-white p-2 rounded-full shadow hover:bg-blue-100"
+                      onClick={() => {
+                        setPreviewProduct(productWithDefaults);
+                        setQuantity(1);
+                        setActiveGalleryIdx(0);
+                      }}
+                    >
+                      <Eye className="h-5 w-5 text-blue-700" />
+                    </button>
+                    <button
+                      onClick={() => addToCart(productWithDefaults)}
+                      className="bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-800"
+                    >
+                      <ShoppingCart className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-medium truncate text-sm">{product.name}</h3>
+                  <p className="text-blue-600 font-bold text-base">
+                    ₦{product.price.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {product.brand} · {product.category}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="p-4">
-              <h3 className="font-medium truncate text-sm">{product.name}</h3>
-              <p className="text-blue-600 font-bold text-base">
-                ₦{product.price}
-              </p>
-              <p className="text-sm text-gray-500">
-                {product.brand} · {product.category}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
+
