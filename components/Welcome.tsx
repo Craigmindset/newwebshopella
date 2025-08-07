@@ -28,7 +28,11 @@ const actions = [
   },
 ];
 
-const Welcome: React.FC<WelcomeProps> = ({ username, isFirstTime = true, onContinue }) => {
+const Welcome: React.FC<WelcomeProps> = ({
+  username,
+  isFirstTime = true,
+  onContinue,
+}) => {
   return (
     <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-10 flex flex-col items-center animate-fadeIn relative overflow-hidden">
       {/* Hero Illustration or Lottie Placeholder */}
@@ -48,7 +52,8 @@ const Welcome: React.FC<WelcomeProps> = ({ username, isFirstTime = true, onConti
         {actions.map((action) => (
           <div
             key={action.key}
-            className="flex flex-col items-center bg-blue-50 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border border-blue-200 min-h-[220px]"
+            className="flex flex-col items-center bg-blue-50 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border border-blue-200 min-h-[220px] h-full"
+            style={{ minHeight: 240 }}
           >
             {action.icon}
             <div className="font-bold text-blue-700 mb-1 text-lg text-center">
@@ -57,14 +62,26 @@ const Welcome: React.FC<WelcomeProps> = ({ username, isFirstTime = true, onConti
             <div className="text-sm text-gray-600 mb-4 text-center">
               {action.description}
             </div>
+            <div className="flex-1" />
             <button
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg text-base font-semibold hover:bg-blue-700 transition-all shadow"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg text-base font-semibold hover:bg-blue-700 transition-all shadow w-full mt-auto"
               onClick={() => onContinue(action.key as any)}
             >
               Continue
             </button>
           </div>
         ))}
+      </div>
+      {/* Quick Tip Section */}
+      <div className="w-full mt-6 bg-blue-100 rounded-xl p-4 flex items-center gap-3 shadow">
+        <span className="bg-blue-600 text-white rounded-full px-3 py-1 text-xs font-bold">
+          Quick Tip
+        </span>
+        <span className="text-blue-700 text-sm">
+          You can shop with your credit instantly, or access your dashboard to
+          manage your account and loans. Explore all features for the best
+          experience!
+        </span>
       </div>
     </div>
   );
