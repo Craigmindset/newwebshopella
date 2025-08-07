@@ -36,7 +36,10 @@ export default function UserHeader({
             <Bell className="h-6 w-6 text-white cursor-pointer" />
             <span className="font-medium">{user.name}</span>
             <button
-              onClick={onLogout}
+              onClick={() => {
+                onLogout();
+                window.location.href = "/";
+              }}
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded flex items-center"
             >
               <LogOut className="h-4 w-4 mr-1" /> Logout
