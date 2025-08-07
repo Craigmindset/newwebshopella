@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/ProductGrid";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/hooks/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,9 @@ export default function RootLayout({
         <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
       </head>
       <body className={inter.className}>
-        <CartProvider>{children}</CartProvider>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

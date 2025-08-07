@@ -34,6 +34,9 @@ const slides = [
   // Only two slides now
 ];
 
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const slideCount = slides.length;
@@ -53,6 +56,9 @@ export default function HeroSection() {
     setCurrent((prev) => (prev - 1 + slideCount) % slideCount);
   const goToNext = () => setCurrent((prev) => (prev + 1) % slideCount);
 
+  const router = useRouter();
+  const { user } = useAuth();
+  console.log("Auth user in HeroSection:", user);
   const slide = slides[current];
 
   return (
@@ -95,7 +101,13 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 className="bg-green-900 hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
-                onClick={() => (window.location.href = slides[0].button1.href)}
+                onClick={() => {
+                  if (user) {
+                    router.push("/dashboard/user");
+                  } else {
+                    router.push("/auth/signup");
+                  }
+                }}
               >
                 {slides[0].button1.text}
               </Button>

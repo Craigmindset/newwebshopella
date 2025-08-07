@@ -110,14 +110,6 @@ export default function Footer() {
                   Carreer
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-300 hover:text-[#466cf4] transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </li>
             </ul>
           </div>
 
