@@ -10,6 +10,7 @@ import StoreDisplayBelow from "@/components/StoreDisplayBelow";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ShoppingCart, Eye } from "lucide-react";
+import ProductPreviewModal from "@/components/ProductPreviewModal";
 
 const demoProducts = [
   {
@@ -116,7 +117,11 @@ export default function ComputingPage() {
     const matchBrand = selectedBrand ? product.brand === selectedBrand : true;
     const matchMin = minPrice !== "" ? product.price >= minPrice : true;
     const matchMax = maxPrice !== "" ? product.price <= maxPrice : true;
-    const matchDeal = showDeals ? product.deal === true : true;
+    const matchDeal = showDeals
+      ? "deal" in product
+        ? product.deal === true
+        : false
+      : true;
     return isActiveCategory && matchBrand && matchMin && matchMax && matchDeal;
   });
 
@@ -135,6 +140,12 @@ export default function ComputingPage() {
       products.filter((p) => p.category === "Computing").map((p) => p.brand)
     )
   );
+
+  const [previewProduct, setPreviewProduct] = useState<any | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
+
+  const { addToCart } = useCart();
 
   return (
     <>
@@ -172,9 +183,47 @@ export default function ComputingPage() {
           </aside>
           {/* Main Content */}
           <div className="flex-1">
-            <ProductSection title="All Computing" products={filteredProducts} />
+            <ProductSection
+              title="All Computing"
+              products={filteredProducts}
+              setPreviewProduct={(product) => {
+                setPreviewProduct(product);
+                setQuantity(1);
+                setActiveGalleryIdx(0);
+              }}
+            />
           </div>
         </div>
+        {/* Preview Modal */}
+        {previewProduct && (
+          <ProductPreviewModal
+            product={{
+              ...previewProduct,
+              gallery:
+                previewProduct.gallery && previewProduct.gallery.length > 0
+                  ? previewProduct.gallery
+                  : [previewProduct.image],
+              description: previewProduct.description || "",
+            }}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            activeGalleryIdx={activeGalleryIdx}
+            setActiveGalleryIdx={setActiveGalleryIdx}
+            onAddToCart={() => {
+              const productWithDefaults = {
+                ...previewProduct,
+                gallery:
+                  previewProduct.gallery && previewProduct.gallery.length > 0
+                    ? previewProduct.gallery
+                    : [previewProduct.image],
+                description: previewProduct.description || "",
+              };
+              addToCart(productWithDefaults, quantity);
+              setPreviewProduct(null);
+            }}
+            onClose={() => setPreviewProduct(null)}
+          />
+        )}
       </main>
       <Footer />
     </>
@@ -184,9 +233,11 @@ export default function ComputingPage() {
 function ProductSection({
   title,
   products,
+  setPreviewProduct,
 }: {
   title: string;
   products: any[];
+  setPreviewProduct: (product: any) => void;
 }) {
   const { addToCart } = useCart();
 
@@ -201,13 +252,20 @@ function ProductSection({
           >
             <div className="relative overflow-hidden rounded-t-xl">
               <img
-                src={product.image && product.image !== "" ? product.image : "/placeholder.jpg"}
+                src={
+                  product.image && product.image !== ""
+                    ? product.image
+                    : "/placeholder.jpg"
+                }
                 alt={product.name}
                 className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300"
-                onError={e => (e.currentTarget.src = "/placeholder.jpg")}
+                onError={(e) => (e.currentTarget.src = "/placeholder.jpg")}
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
-                <button className="bg-white p-2 rounded-full shadow hover:bg-blue-100">
+                <button
+                  className="bg-white p-2 rounded-full shadow hover:bg-blue-100"
+                  onClick={() => setPreviewProduct(product)}
+                >
                   <Eye className="h-5 w-5 text-blue-700" />
                 </button>
                 <button
@@ -221,7 +279,7 @@ function ProductSection({
             <div className="p-4">
               <h3 className="font-medium truncate text-sm">{product.name}</h3>
               <p className="text-blue-600 font-bold text-base">
-                ₦{product.price}
+                ₦{product.price.toLocaleString()}
               </p>
               <p className="text-sm text-gray-500">
                 {product.brand} · {product.category}

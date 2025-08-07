@@ -47,9 +47,23 @@ const sideBannerImages = [
 ];
 
 export default function StoreBanner() {
+  // Map category names to their respective URLs
+  const categoryLinks: Record<string, string> = {
+    "Phones and Tablets": "/store/phones-tablets",
+    Computing: "/store/computing",
+    Electronics: "/store/electronics",
+    Generators: "/store/generators",
+    Accessories: "/store/accessories",
+    "Home & Kitchen": "/store/home-&-kitchen",
+    Lifestyle: "/store/lifestyle",
+    Watches: "/store/watches",
+    "Premium Devices": "/store/premium-devices",
+  };
+
   const handleCategoryClick = (catName: string) => {
-    if (catName === "Phones and Tablets") {
-      window.location.href = "/store/phones-tablets";
+    const url = categoryLinks[catName];
+    if (url) {
+      window.location.href = url;
     }
   };
   const [showBrands, setShowBrands] = useState(false);
