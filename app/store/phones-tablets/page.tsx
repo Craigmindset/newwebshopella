@@ -233,48 +233,184 @@ function ProductSection({
   products: typeof products;
 }) {
   const { addToCart } = useCart();
+  type ProductType = {
+    id: number;
+    name: string;
+    price: number;
+    brand: string;
+    category: string;
+    image: string;
+    description?: string;
+    gallery?: string[];
+  };
+  const [previewProduct, setPreviewProduct] = useState<ProductType | null>(
+    null
+  );
+  const [quantity, setQuantity] = useState(1);
+  const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
 
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
-          >
-            <div className="relative overflow-hidden rounded-t-xl">
-              <Image
-                src={product.image || "/placeholder.svg"}
-                alt={product.name}
-                width={300}
-                height={300}
-                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
-                <button className="bg-white p-2 rounded-full shadow hover:bg-blue-100">
-                  <Eye className="h-5 w-5 text-blue-700" />
-                </button>
+        {(products as ProductType[]).map((product) => {
+          const productWithDefaults = {
+            ...product,
+            gallery: [product.image],
+            specifications: [],
+            description: product.description || "",
+          };
+          return (
+            <div
+              key={product.id}
+              className="bg-white rounded-xl shadow-lg group transition hover:scale-105"
+            >
+              <div className="relative overflow-hidden rounded-t-xl">
+                <Image
+                  src={product.image || "/placeholder.svg"}
+                  alt={product.name}
+                  width={300}
+                  height={300}
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
+                  <button
+                    className="bg-white p-2 rounded-full shadow hover:bg-blue-100"
+                    onClick={() => {
+                      setPreviewProduct(product);
+                      setQuantity(1);
+                      setActiveGalleryIdx(0);
+                    }}
+                  >
+                    <Eye className="h-5 w-5 text-blue-700" />
+                  </button>
+                  <button
+                    onClick={() => addToCart(productWithDefaults)}
+                    className="bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-800"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-medium truncate text-sm">{product.name}</h3>
+                <p className="text-blue-600 font-bold text-base">
+                  ₦{product.price}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {product.brand} · {product.category}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Product Preview Modal */}
+      {previewProduct && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-md w-full overflow-hidden flex flex-col items-center p-6 relative">
+            {/* Gallery Main Image */}
+            <Image
+              src={
+                (previewProduct.gallery && previewProduct.gallery.length > 0
+                  ? previewProduct.gallery[activeGalleryIdx]
+                  : previewProduct.image) &&
+                (previewProduct.gallery && previewProduct.gallery.length > 0
+                  ? previewProduct.gallery[activeGalleryIdx]
+                  : previewProduct.image) !== ""
+                  ? previewProduct.gallery && previewProduct.gallery.length > 0
+                    ? previewProduct.gallery[activeGalleryIdx]
+                    : previewProduct.image
+                  : "/placeholder.svg"
+              }
+              alt={previewProduct.name}
+              width={250}
+              height={250}
+              className="rounded object-contain mb-4"
+            />
+            {/* Gallery Thumbnails */}
+            {previewProduct.gallery && previewProduct.gallery.length > 1 && (
+              <div className="flex gap-2 mb-4">
+                {previewProduct.gallery.map((img, idx) => (
+                  <button
+                    key={img}
+                    onClick={() => setActiveGalleryIdx(idx)}
+                    className={`border rounded p-1 ${
+                      activeGalleryIdx === idx
+                        ? "border-blue-500"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <Image
+                      src={img && img !== "" ? img : "/placeholder.svg"}
+                      alt={`Thumbnail ${idx + 1}`}
+                      width={48}
+                      height={48}
+                      className="object-cover rounded"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            <h2 className="text-lg font-bold text-center mb-2">
+              {previewProduct.name}
+            </h2>
+            <p className="text-blue-600 font-bold text-xl mb-2">
+              ₦{previewProduct.price}
+            </p>
+            <p className="text-sm text-gray-500 mb-2 text-center">
+              {previewProduct.brand} · {previewProduct.category}
+            </p>
+            <p className="text-sm text-gray-700 mb-4 text-center">
+              {previewProduct.description || "No description available."}
+            </p>
+            <div className="flex items-center gap-4 mb-4">
+              <label className="text-xs">Quantity:</label>
+              <div className="flex items-center border rounded">
                 <button
-                  onClick={() => addToCart(product)}
-                  className="bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-800"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-3"
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  -
+                </button>
+                <span className="px-4 border-x">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-3"
+                >
+                  +
                 </button>
               </div>
             </div>
-            <div className="p-4">
-              <h3 className="font-medium truncate text-sm">{product.name}</h3>
-              <p className="text-blue-600 font-bold text-base">
-                ₦{product.price}
-              </p>
-              <p className="text-sm text-gray-500">
-                {product.brand} · {product.category}
-              </p>
-            </div>
+            <Button
+              onClick={() => {
+                const productWithDefaults = {
+                  ...previewProduct,
+                  gallery:
+                    previewProduct.gallery && previewProduct.gallery.length > 0
+                      ? previewProduct.gallery
+                      : [previewProduct.image],
+                  specifications: [],
+                  description: previewProduct.description || "",
+                };
+                addToCart(productWithDefaults, quantity);
+                setPreviewProduct(null);
+              }}
+              className="bg-blue-600 text-white px-6 py-2 w-full"
+            >
+              Add to Cart
+            </Button>
+            <button
+              onClick={() => setPreviewProduct(null)}
+              className="absolute top-4 right-4 text-gray-600 hover:text-black"
+              style={{ position: "absolute", top: 16, right: 16 }}
+            >
+              ×
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

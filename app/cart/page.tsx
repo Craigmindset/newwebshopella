@@ -98,7 +98,7 @@ export default function CartPage() {
                     <h3 className="text-base font-semibold text-gray-900 truncate">{item.name}</h3>
                     <p className="text-xs text-gray-600 truncate">{item.description}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <span className="text-base font-bold text-[#466cf4]">₦{item.price.toFixed(2)}</span>
+                      <span className="text-base font-bold text-[#466cf4]">₦{item.price.toLocaleString()}</span>
                       <div className="flex items-center border rounded">
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
@@ -127,7 +127,7 @@ export default function CartPage() {
                   {/* Item Total */}
                   <div className="text-right min-w-[70px]">
                     <p className="text-xs text-gray-600">Total</p>
-                    <p className="text-base font-bold text-gray-900">₦{(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-base font-bold text-gray-900">₦{(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal ({cartCount} items)</span>
-                  <span className="font-semibold">₦{getCartTotal().toFixed(2)}</span>
+                  <span className="font-semibold">₦{getCartTotal().toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Delivery</span>
@@ -150,12 +150,12 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Vat</span>
-                  <span className="font-semibold">₦{(getCartTotal() * 0.08).toFixed(2)}</span>
+                  <span className="font-semibold">₦{(getCartTotal() * 0.08).toLocaleString()}</span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-lg font-semibold">Total</span>
-                    <span className="text-xl font-bold text-[#466cf4]">₦{(getCartTotal() * 1.08).toFixed(2)}</span>
+                    <span className="text-xl font-bold text-[#466cf4]">₦{(getCartTotal() * 1.08).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

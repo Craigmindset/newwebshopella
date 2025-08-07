@@ -145,9 +145,25 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   };
 
+  // Update quantity for a cart item
+  const updateQuantity = (productId: number, newQuantity: number) => {
+    setCartItems((prev: CartItem[]) =>
+      prev.map((item) =>
+        item.id === productId
+          ? { ...item, quantity: Math.max(1, newQuantity) }
+          : item
+      )
+    );
+  };
+
+  // Remove item from cart
+  const removeFromCart = (productId: number) => {
+    setCartItems((prev: CartItem[]) => prev.filter((item) => item.id !== productId));
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, cartCount, addToCart, getCartTotal, clearCart }}
+      value={{ cartItems, cartCount, addToCart, updateQuantity, removeFromCart, getCartTotal, clearCart }}
     >
       {children}
     </CartContext.Provider>

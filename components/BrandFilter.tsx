@@ -90,7 +90,9 @@ export default function BrandFilter({
             }
           }}
         >
-          <option value="" className="text-xs">All Brands</option>
+          <option value="" className="text-xs">
+            All Brands
+          </option>
           {allBrandOptions.map((brand) => (
             <option key={brand} value={brand} className="text-xs">
               {brand}
@@ -109,22 +111,24 @@ export default function BrandFilter({
             setSelectedCategory(value);
             // Map category names to their page slugs
             const categoryToSlug: Record<string, string> = {
-              "Electronics": "/store/electronics",
+              Electronics: "/store/electronics",
               "Phones and Tablets": "/store/phones-tablets",
-              "Computing": "/store/computing",
-              "Generators": "/store/generators",
-              "Accessories": "/store/accessories",
+              Computing: "/store/computing",
+              Generators: "/store/generators",
+              Accessories: "/store/accessories",
               "Home & Kitchen": "/store/home-&-kitchen",
-              "Lifestyle": "/store/lifestyle",
-              "Watches": "/store/watches",
-              "Premium Devices": "/store/premium-devices"
+              Lifestyle: "/store/lifestyle",
+              Watches: "/store/watches",
+              "Premium Devices": "/store/premium-devices",
             };
             if (value && categoryToSlug[value]) {
               router.push(categoryToSlug[value]);
             }
           }}
         >
-          <option value="" className="text-xs">All Categories</option>
+          <option value="" className="text-xs">
+            All Categories
+          </option>
           {allCategories
             .filter((cat) => cat !== activeCategory)
             .map((cat) => (
@@ -134,26 +138,41 @@ export default function BrandFilter({
             ))}
         </select>
       </div>
-      {/* Price Range */}
+      {/* Price Sort */}
       <div className="mb-6">
         <label className="block text-xs font-semibold mb-2">
-          Price Range (₦)
+          Sort by Price
         </label>
-        <div className="flex gap-2">
+        <select
+          className="border rounded px-3 py-2 bg-white shadow w-full text-xs"
+          value={sortOrder || ""}
+          onChange={(e) =>
+            setSortOrder(e.target.value as "low" | "high" | "newest" | null)
+          }
+        >
+          <option value="" className="text-xs">
+            Default
+          </option>
+          <option value="low" className="text-xs">
+            Low to High
+          </option>
+          <option value="high" className="text-xs">
+            High to Low
+          </option>
+        </select>
+        {/* Sort by Budget */}
+        <div className="mt-3">
+          <label className="block text-xs font-semibold mb-2">
+            Sort by Budget
+          </label>
           <input
             type="number"
-            placeholder="Min"
+            placeholder="Enter your budget (₦)"
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : "")}
-            className="border rounded px-2 py-1 w-20 text-xs"
-            min={0}
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : "")}
-            className="border rounded px-2 py-1 w-20 text-xs"
+            onChange={(e) =>
+              setMinPrice(e.target.value ? Number(e.target.value) : "")
+            }
+            className="border rounded px-2 py-1 w-full text-xs"
             min={0}
           />
         </div>
@@ -169,7 +188,9 @@ export default function BrandFilter({
             onChange={(e) => setShowDeals(e.target.checked)}
             className="mr-2"
           />
-          <label htmlFor="deals" className="text-xs">Show Deals Only</label>
+          <label htmlFor="deals" className="text-xs">
+            Show Deals Only
+          </label>
         </div>
       </div>
       {/* Reset Button */}
