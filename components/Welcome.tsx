@@ -94,7 +94,7 @@ const Welcome: React.FC<WelcomeProps> = ({
         {isFirstTime ? `Welcome, ${username}!` : `Welcome Back, ${username}!`}
       </h2>
       <div className="text-base text-gray-700 text-center mb-1">
-        We're excited to have you on Shopella.
+        We're excited to have you on Kredmart.
       </div>
       <div className="text-lg font-semibold mb-8 text-center text-blue-700">
         What would you like to do next?
