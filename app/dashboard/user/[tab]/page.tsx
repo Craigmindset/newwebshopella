@@ -1,25 +1,31 @@
 "use client";
-// Demo User Dashboard
-import React from "react";
+import { useRouter } from "next/navigation";
+import Overview from "@/components/Overview";
 import UserHeader from "@/components/UserHeader";
 import SideMenuBar from "@/components/ui/SideMenuBar";
 import { Menu } from "lucide-react";
-import Overview from "@/components/Overview";
+import React from "react";
+import { useAuth } from "@/hooks/useAuth";
 import LoanRequest from "@/components/LoanRequest";
-import { useRouter, usePathname } from "next/navigation";
 
-export default function UserDashboardPage() {
+export default function UserDashboardTabPage({
+  params,
+}: {
+  params: { tab: string };
+}) {
   const router = useRouter();
-  const pathname = usePathname();
+  const { user, loading } = useAuth();
+  React.useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login");
+    }
+  }, [user, loading, router]);
   const demoUser = { name: "Demo User", email: "demo@user.com" };
-  // Extract tab from URL, default to 'overview'
-  const tab = pathname.split("/").pop() || "overview";
+  const tab = params.tab || "overview";
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const handleLogout = () => {
     window.location.href = "/";
   };
-
-  // Menu click handler navigates to correct URL
   const handleMenuSelect = (id: string) => {
     router.push(`/dashboard/user/${id}`);
     setSidebarOpen(false);
@@ -31,7 +37,6 @@ export default function UserDashboardPage() {
       <div className="sticky top-0 z-40 shadow-lg">
         <UserHeader user={demoUser} onLogout={handleLogout} />
       </div>
-
       {/* Mobile Hamburger */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-full p-2 shadow-lg border border-gray-200"
@@ -40,7 +45,6 @@ export default function UserDashboardPage() {
       >
         <Menu className="h-6 w-6 text-[#466cf4]" />
       </button>
-
       {/* Sidebar Drawer for Mobile */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 flex">
@@ -50,7 +54,6 @@ export default function UserDashboardPage() {
           <div className="flex-1" onClick={() => setSidebarOpen(false)} />
         </div>
       )}
-
       <div className="flex flex-col md:flex-row flex-1 min-h-0">
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
