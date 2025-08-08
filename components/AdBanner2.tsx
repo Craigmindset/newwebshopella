@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdBanner() {
   const slides = [
@@ -17,7 +17,7 @@ export default function AdBanner() {
       label: "Samsung",
       title: ["Galaxy", "S24 Ultra"],
       desc: "6.8-inch QHD+ Dynamic AMOLED 2X, 200MP camera, 5000mAh battery, S Pen support, and more.",
-      img: "https://images.samsung.com/is/image/samsung/p6pim/levant/2401/gallery/levant-galaxy-s24-ultra-sm-s928bzkgmea-thumb-539205314?",
+      img: "/StoreBanner/kredmart-img (3).png",
       cta: { href: "/category/phones", text: "Shop Samsung Phones" },
     },
     {
@@ -34,6 +34,14 @@ export default function AdBanner() {
     setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   const nextSlide = () =>
     setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+
+  // Auto-slide effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 4000); // 4 seconds
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   const slide = slides[current];
 
